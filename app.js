@@ -194,7 +194,7 @@ app.get("/items/:itemId", function(req,res){
 //logout route
 app.get('/logout',function(req,res){
   req.logout();
-  res.render("starting");
+  res.redirect("/");
 });
 
 app.get('*', function(req, res){
