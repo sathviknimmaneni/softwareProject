@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const bodyParser=require('body-parser');
 const ejs=require('ejs');
@@ -5,6 +6,7 @@ const mongoose=require('mongoose');
 const session=require('express-session');
 const passport=require('passport');
 const passportLocalMongo=require('passport-local-mongoose');
+const cuid=require("cuid");
 
 const app = express();
 
@@ -23,10 +25,11 @@ app.use(passport.session());
 
 //mongoose connnection and schemas
 //be sure to change Password
-mongoose.connect("mongodb+srv://Sathvik:Test-123@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBkey+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex",true);
 
 const auctionSchema=new mongoose.Schema({
+  startedBy:String,
   name:String,
   category:String,
   basePrice:Number,
@@ -36,7 +39,7 @@ const auctionSchema=new mongoose.Schema({
   currentBidder:String
 });
 
-auctionSchema.plugin(passportLocalMongo);
+auctionSchema.plugin(passportLocalMongo, { usernameUnique: false});
 
 const userSchema=new mongoose.Schema({
   username:String,
@@ -127,29 +130,38 @@ res.redirect("/login");
 }
 });
 
-app.post('/startauction',function(req,res){
-    var item={
+app.post("/startauction", function(req,res){
+  if(req.isAuthenticated()){
+    var compose={
       itemName:req.body.productName,
       itemCategory:req.body.productCategory,
-      itemBasePrice:req.body.productBasePrice,
+      itemBasePrice:req.body.productPrice,
       itemDuration:req.body.productDuration,
-      itemDescription:req.body.productDescription,
-    }
+      itemDescription:req.body.productDescription
+    };
+
 
   const newItem=new Auction({
-    name:item.itemName,
-    category:item.itemCategory,
-    basePrice:item.itemBasePrice,
-    duration:item.itemDuration,
-    description:item.itemDescription,
-  })
+    startedBy:req.user.id,
+    name:compose.itemName,
+    category:compose.itemCategory,
+    basePrice:compose.itemBasePrice,
+    duration:compose.itemDuration,
+    description:compose.itemDescription
+  });
 
-    newItem.save(function(err){
-      if(!err){
-        res.redirect("/home");
-      }
-    });
-});
+  newItem.save(function(err){
+     if (!err){
+       res.redirect("/home");
+     }else{
+       console.log(err);
+     }
+   });
+ }else{
+   res.redirect("/");
+ }
+})
+
 
 app.post("/bidUpdate",function(req,res){
     res.redirect("home");
