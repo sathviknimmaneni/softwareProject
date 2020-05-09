@@ -25,7 +25,8 @@ app.use(passport.session());
 
 //mongoose connnection and schemas
 //be sure to change Password
-mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBkey+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://Sathvik:Test-123@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex",true);
 
 const auctionSchema=new mongoose.Schema({
@@ -47,8 +48,15 @@ const userSchema=new mongoose.Schema({
 });
 userSchema.plugin(passportLocalMongo);
 
+const testSchema=new mongoose.Schema({
+  email:String,
+  username:String,
+  password:String
+});
+
 const Auction=mongoose.model("Auction",auctionSchema);
 const User=mongoose.model("User",userSchema);
+const Test=mongoose.model("Test",testSchema);
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
@@ -196,6 +204,26 @@ app.get('/logout',function(req,res){
   req.logout();
   res.redirect("/");
 });
+
+app.get("/test",function(req,res){
+  res.render("test");
+});
+app.post("/test",function(req,res){
+  test = new Test({
+    email:req.body.email,
+    username:req.body.username,
+    password:req.body.password
+  });
+test.save(function(err){
+  if(err){
+    console.log(err);
+  }else{
+    res.send("Success");
+  }
+});
+
+});
+
 
 app.get('*', function(req, res){
   res.status(404).render('error404');
