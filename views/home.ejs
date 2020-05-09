@@ -1,0 +1,48 @@
+<%- include('partials/navbar') %>
+
+<section id="Intro Content">
+<div class="jumbotron">
+  <h1>Welcome back,</h1>
+</div>
+
+<div class="card-deck">
+  <div class="card">
+    <h1>Start Auction</h1>
+    <a href="/startauction" class="btn btn-outline-dark btn-lg btn-block" role="button">New Auction</a>
+
+  </div>
+
+  <div class="card">
+    <h1>Joined Auction</h1>
+    <a href="" class="btn btn-outline-dark btn-lg btn-block" role="button">View</a>
+
+  </div>
+
+  <div class="card">
+    <h1>Your Auction</h1>
+    <a href="" class="btn btn-outline-dark btn-lg btn-block" role="button">View</a>
+
+  </div>
+</div>
+
+  </section>
+
+
+<section id="Auction_items">
+
+<div class="card-deck">
+  <% post.forEach(function(item){ %>
+    <div class="card col-lg-3 col-sm-6">
+    <img src="..." alt="Card image cap">
+      <h5><%= item.name %></h5>
+      <p><small>By name</small></p>
+      <p>Current Price:</p>
+      <p>Ends in:</p>
+      <%- include('bidUpdate') %>
+      <br>
+      <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block" role="button">View Details</a>
+    </div>
+  <% }) %>
+</div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<%- include('partials/navbar') %>
+  <div class="auctionCreate">
+    <form class="Create" action="/startauction" method="post">
+      <table>
+        <tr>
+          <th><label for="productName">Product Name:</label></th>
+          <td><input type="text" name="productName" value=""></td>
+        </tr>
+
+      <tr>
+
+        <th><label for="productCategory">Category:</label></th>
+        <td>
+        <select class="Category" name="productCategory">
+          <option value="Clothes">Clothes</option>
+          <option value="shoes">Shoes</option>
+          <option value="books">Books</option>
+        </select>
+      </td>
+      </tr>
+
+      <tr>
+          <th><label for="productPrice">Product Base Price:</label></th>
+          <td><input type="text" name="productBasePrice" value=""></td>
+        </tr>
+
+        <tr>
+            <th><label for="productDuration">Duration:</label></th>
+            <td><input type="text" name="productDuration" value="" placeholder="enter in hours"></td>
+          </tr>
+
+<tr>
+  <th>    <label for="myfile">Choose Images:</label></th>
+  <td>        <input type="file" id="myfile" name="myfile" multiple>
+</td>
+</tr>
+
+        <tr>
+          <th><label for="productDescription">Product Description:</label></th>
+          <td>  <textarea name="productDescription" rows="4" cols="50"></textarea></td>
+        </tr>
+
+      </table>
+<button type="submit" name="button">Start Auction</button>
+    </form>
+  </div>
+</section>
+<%- include('partials/footer') %>

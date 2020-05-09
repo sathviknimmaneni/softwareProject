@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="styles/login.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+
+    <form class="form-signin div_back" action="/login" method="post">
+    <h1 class="h3 mb-4 font-weight-normal">Sign in</h1>
+    <input name="username" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+    <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <p>Not a user,<a href="/signup"> Sign up now!</a></p>
+  </form>
+
+  <%- include('partials/footer') %>
