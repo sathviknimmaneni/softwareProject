@@ -14,8 +14,8 @@
     <h1 class="h3 mb-4 font-weight-normal">Sign in</h1>
     <input name="username" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
     <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <button class="btn btn-lg btn-primary btn-block" onclick="emailValid()" type="submit">Sign in</button>
     <p>Not a user,<a href="/signup"> Sign up now!</a></p>
   </form>
-
+<script src="public\scripts\emailvalid.js" charset="utf-8"></script>
   <%- include('partials/footer') %>

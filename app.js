@@ -170,6 +170,9 @@ app.post("/startauction", function(req,res){
  }
 })
 
+app.get("/bidUpdate",function(req,res){
+  res.render("bidUpdate");
+});
 
 app.post("/bidUpdate",function(req,res){
     res.redirect("home");
