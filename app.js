@@ -183,7 +183,19 @@ app.get('/viewbids',function(req,res){
 });
 
 app.get('/manageauctions',function(req,res){
-  res.render('Manage_auctions');
+  if(req.isAuthenticated()){
+    Auction.find({startedBy:req.user.id}, function(err, result){
+        if(err){
+        console.log(err);
+        }else{
+          res.render('manage_auction', {
+            auctionList: result
+            });
+         }
+       });
+  }else{
+    res.redirect("/login");
+  }
 })
 
 //individual items route
