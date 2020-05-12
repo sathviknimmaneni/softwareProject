@@ -4,26 +4,25 @@
   <div class="row no-gutters row_margin" style="background-color: #e6ffff;padding-bottom: 50px;">
     <div class="col-md-6">
       <div>
-        <h1><%= Name %></h1>
-        <h5>By name</h5>
+        <h1><%= items.name %></h1>
+        <h5><%= items.startedBy %></h5>
         <hr>
-        <h4>No of Participants</h4>
         <table>
           <tr>
             <th>Start Bid</th>
-            <td><%= basePrice %></td>
+            <td><%= items.basePrice %></td>
             <th>Current Bid</th>
-            <td>Current price</td>
+            <td><%= items.currentBid %></td>
           </tr>
           <tr>
             <th>Start Date</th>
-            <td>date</td>
+            <td><%= items.startedOn %></td>
             <th>Ends in:</th>
             <td>time</td>
           </tr>
         </table>
 
-<%- include('bidUpdate') %>
+<%- include('bidUpdate',{Item:items}) %>
           </div>
     </div>
 </div>
@@ -35,7 +34,7 @@
       <div class="col-md-6">
         <div class="description">
           <h3>Description</h3>
-          <p><%= itemDescription %></p>
+          <p><%= items.description %></p>
         </div>
       </div>
 
@@ -45,31 +44,27 @@
           <table class="DTable">
             <tr>
               <th>Product Name</th>
-              <td><%= Name %></td>
+              <td><%= items.name %></td>
             </tr>
             <tr>
               <th>Product By</th>
-              <td>someone</td>
+              <td><%= items.startedBy %></td>
             </tr>
             <tr>
               <th>Category</th>
-              <td><%= itemCategory %></td>
+              <td><%= items.category %></td>
             </tr>
             <tr>
               <th>Base price</th>
-              <td><%= basePrice %></td>
+              <td><%= items.basePrice %></td>
             </tr>
             <tr>
               <th>Auction Start</th>
-              <td>some date</td>
+              <td><%= items.startedOn %></td>
             </tr>
             <tr>
               <th>Auction end</th>
               <td>some date</td>
-            </tr>
-            <tr>
-              <th>some Detail</th>
-              <td>some Value</td>
             </tr>
             <tr>
               <th>Contact</th>

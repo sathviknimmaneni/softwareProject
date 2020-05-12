@@ -4,27 +4,30 @@ const bodyParser=require('body-parser');
 const ejs=require('ejs');
 const mongoose=require('mongoose');
 const session=require('express-session');
+var cookieParser = require('cookie-parser');
 const passport=require('passport');
 const passportLocalMongo=require('passport-local-mongoose');
-const cuid=require("cuid");
+var flash = require('connect-flash');
+const { Timer } = require('easytimer');
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
-app.use(session({
-  secret:"thisisourlittlesecret..",
-  resave:false,
-  saveUninitialized: false,
-}));
+ app.use(express.static("public"));
+ app.use(cookieParser('secret'));
+ app.use(session({
+   secret:process.env.SECRET,
+   resave:false,
+   saveUninitialized: false,
+ }));
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 //mongoose connnection and schemas
-//be sure to change Password
 mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 //mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex",true);
@@ -36,6 +39,7 @@ const auctionSchema=new mongoose.Schema({
   basePrice:Number,
   duration:Number,
   description:String,
+  startedOn:Date,
   currentBid:Number,
   currentBidder:String
 });
@@ -44,19 +48,14 @@ auctionSchema.plugin(passportLocalMongo, { usernameUnique: false});
 
 const userSchema=new mongoose.Schema({
   username:String,
-  password:String
-});
-userSchema.plugin(passportLocalMongo);
-
-const testSchema=new mongoose.Schema({
   email:String,
-  username:String,
-  password:String
+  password:String,
+  joinedAuction:[]
 });
+userSchema.plugin(passportLocalMongo,{usernameField: "email"});
 
 const Auction=mongoose.model("Auction",auctionSchema);
 const User=mongoose.model("User",userSchema);
-const Test=mongoose.model("Test",testSchema);
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
@@ -65,6 +64,7 @@ passport.deserializeUser(User.deserializeUser());
 // starting route
 app.get('/',function(req,res){
   if(req.isAuthenticated()){
+    req.flash("Welcome","welcome back,")
     res.redirect("/home");
   }else{
     res.render("starting");
@@ -78,34 +78,35 @@ app.get('/login',function(req,res){
 
 app.post('/login',function(req,res){
   user = new User({
-    username:req.body.username,
+    email:req.body.email,
     password:req.body.password
   });
 
     req.login(user,function(err){
       if(err){
         console.log(err);
-        res.redirect('/');
+        res.redirect('/login');
       }else{
-        passport.authenticate("local")(req,res,function(){
-          res.redirect('/home');
-      });
+        passport.authenticate("local",{failureFlash:true,failureRedirect: "/login"})(req,res,function(){
+          res.redirect("/home");
+        });
     }
-    })
-})
+});
+});
 
 //signup route
 app.get('/signup',function(req,res){
-  res.render('signup2');
+  res.render('signup');
 })
 
 app.post('/signup',function(req,res){
-  User.register({username:req.body.username},req.body.password,function(err,user){
+  User.register({email:req.body.email,username:req.body.username},req.body.password,function(err,user){
   if(err){
     console.log(err);
     res.redirect('/signup');
   }else{
     passport.authenticate("local")(req,res,function(){
+      req.flash("successSignUp","Your acount has been succesfully created..")
       res.redirect('/home');
     });
   }
@@ -120,7 +121,12 @@ app.get('/home',function(req,res){
         console.log(err);
         }else{
            res.render("home", {
-             post: items
+             post: items,
+             welcomeMessage:req.flash("Welcome"),
+             startedAuction:req.flash("auctionStarted"),
+             unableBid:req.flash("errorBid"),
+             placedBid:req.flash("successBid"),
+             signedUp:req.flash("successSignUp")
              });
          }
        });
@@ -140,26 +146,21 @@ res.redirect("/login");
 
 app.post("/startauction", function(req,res){
   if(req.isAuthenticated()){
-    var compose={
-      itemName:req.body.productName,
-      itemCategory:req.body.productCategory,
-      itemBasePrice:req.body.productPrice,
-      itemDuration:req.body.productDuration,
-      itemDescription:req.body.productDescription
-    };
-
 
   const newItem=new Auction({
     startedBy:req.user.id,
-    name:compose.itemName,
-    category:compose.itemCategory,
-    basePrice:compose.itemBasePrice,
-    duration:compose.itemDuration,
-    description:compose.itemDescription
+    name:req.body.itemName,
+    category:req.body.itemCategory,
+    basePrice:req.body.basePrice,
+    currentBid:req.body.basePrice,
+    duration:req.body.itemDuration,
+    description:req.body.itemDescription,
+    startedOn:new Date()
   });
 
   newItem.save(function(err){
      if (!err){
+       req.flash("auctionStarted","succesfully started Auction");
        res.redirect("/home");
      }else{
        console.log(err);
@@ -170,18 +171,21 @@ app.post("/startauction", function(req,res){
  }
 })
 
+//bidupdate and validation routes
 app.get("/bidUpdate",function(req,res){
   res.render("bidUpdate");
 });
 
 app.post("/bidUpdate",function(req,res){
-    res.redirect("home");
+console.log(req.body.bidAmount);
 });
 
+//view current auction routes
 app.get('/viewbids',function(req,res){
   res.render('view_bids');
 });
 
+//manageauctions route
 app.get('/manageauctions',function(req,res){
   if(req.isAuthenticated()){
     Auction.find({startedBy:req.user.id}, function(err, result){
@@ -206,39 +210,34 @@ app.get("/items/:itemId", function(req,res){
       if(err){
         console.log(err);
       }else{
-          res.render("bids",{Name: item.name,basePrice: item.basePrice,itemCategory:item.category,itemDescription:item.description});
+          res.render("bids",{items:item});
         }
    });
  }else{
    res.redirect("/login");
  }
-})
+});
+
+//bid update route under testing...
+app.post("/placeBid/:itemId",function(req,res){
+  var productId=req.params.itemId;
+      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder":req.user.id}},{upsert:true},function(err,result){
+        if(err){
+          console.log(err);
+          req.flash("errorBid","You cannot place a Bid for your own Auction")
+          res.redirect("/home");
+        }else{
+          req.flash("successBid","Your Bid is succesfully placed.")
+          res.redirect("/home");
+        }
+      });
+});
 
 //logout route
 app.get('/logout',function(req,res){
   req.logout();
   res.redirect("/");
 });
-
-app.get("/test",function(req,res){
-  res.render("test");
-});
-app.post("/test",function(req,res){
-  test = new Test({
-    email:req.body.email,
-    username:req.body.username,
-    password:req.body.password
-  });
-test.save(function(err){
-  if(err){
-    console.log(err);
-  }else{
-    res.send("Success");
-  }
-});
-
-});
-
 
 app.get('*', function(req, res){
   res.status(404).render('error404');

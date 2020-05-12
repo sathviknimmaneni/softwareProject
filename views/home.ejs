@@ -1,4 +1,5 @@
 <%- include('partials/navbar') %>
+<%- include('errorMessages') %>
 
 <section id="Intro Content">
 <div class="jumbotron">
@@ -30,19 +31,22 @@
 
 <section id="Auction_items">
 
-<div class="card-deck">
+<div class="card-deck row">
   <% post.forEach(function(item){ %>
-    <div class="card col-lg-3">
-    <img src="..." alt="Card image cap">
-      <h5><%= item.name %></h5>
-      <p><small>By name</small></p>
-      <p>Current Price:</p>
-      <p>Ends in:</p>
-    <%- include("bidUpdate") %>
-      <br>
-      <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block" role="button">View Details</a>
-    </div>
+    <div class="col-md-3">
+            <div class="card">
+                <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+                <div class="card-block">
+                  <h5><%= item.name %></h5>
+                  <p><small><%= item.startedBy %></small></p>
+                  <p>Current Price:<%= item.currentBid %></p>
+                </div>
+                <%- include("bidUpdate",{Item:item}) %>
+                <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block" role="button">View Details</a>
+            </div>
+        </div>
   <% }) %>
 </div>
 </section>
+
 <%- include('partials/footer') %>

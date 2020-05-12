@@ -1,27 +1,25 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-      Place Bid
-    </button>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-dark btn-lg btn-block" data-toggle="modal" data-target="#productModal<%= Item._id %>">Place Bid</button>
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Product Name</h5>
-              <p class="modal-title" id="exampleModalLongTitle">Current Bid</p>
-                <p class="modal-title" id="exampleModalLongTitle">Ends in</p>
-          </div>
-<form class="" action="/bidUpdate" method="post">
-          <div class="modal-body">
-              <p>form elements to place bid</p>
-              <input type="text" name="bidAmount" value="">
-          </div>
-
-          <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Exit</button>
-            <button type="submit" class="btn btn-primary">Place Bid</button>
-          </div>
-</form>
-        </div>
+<!-- Modal -->
+<div class="modal fade" id="productModal<%= Item._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" id="<%= Item._id %>">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"><%= Item.name%></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
+      <form class="" action="/placeBid/<%= Item._id %>" method="post">
+      <div class="modal-body">
+          <input type="number" name="updatedValue" value="<%= Item.currentBid +1 %>" min="<%= Item.currentBid + 1 %>" required>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Exit</button>
+        <button type="submit" class="btn btn-primary">Place Bid</button>
+      </div>
+    </form>
     </div>
+  </div>
+</div>

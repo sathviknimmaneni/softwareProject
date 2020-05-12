@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <%- include('partials/navbar') %>
     <div class="Manage_auctions">
-<% auctionList.forEach(function(items){ %>
-  <div class="row no-gutters card_margin">
-  <div class="col-md-8">
-    <div class="">
-      <h3 class="product_name heading"><%= items.name %></h3>
-      <h5 class="heading" style="margin-left: 200px;">Auction Ends in:</h5>
-      <p class="product_id"><small>Product Id:123456789</small></p>
-      <p class="">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <span class="bid_details"><small class="text-muted">Participants:10</small></span>
-        <span class="bid_details"><small class="text-muted">Current Bid amount=Rs.500</small></span>
-    </div>
-  </div>
+      <div class="jumbotron">
+      <h1>Hello</h1>
+      </div>
 
-  <div class="col-md-4">
-    <img src="images/auction.jpg" class="card-img image_size" alt="...">
-  </div>
-  </div>
+      <div class="card-deck row">
+<% auctionList.forEach(function(items){ %>
+  <div class="col-md-3">
+          <div class="card">
+              <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+              <div class="card-block">
+                <h5><%= items.name %></h5>
+                <p><small>By name</small></p>
+                <p>Current Price:<%= items.currentBid %></p>
+                <p>Ends in:</p>
+              </div>
+              <a href="/items/<%= items._id %>" class="btn btn-outline-dark btn-lg btn-block" role="button">View Details</a>
+          </div>
+      </div>
 <% }) %>
 </div>
-
+</div>
 <%- include('partials/footer') %>

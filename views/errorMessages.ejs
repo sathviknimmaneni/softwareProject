@@ -1,0 +1,45 @@
+<% if (startedAuction.length>0) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong><%= startedAuction%></strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+  <% } %>
+
+  <% if (signedUp.length>0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong><%= signedUp %></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    <% } %>
+
+  <% if (welcomeMessage.length>0) { %>
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong><%= welcomeMessage%></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    <% } %>
+
+
+      <% if (unableBid.length>0) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong><%= unableBid%></strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <% } %>
+
+          <% if (placedBid.length>0) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><%= placedBid%></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <% } %>

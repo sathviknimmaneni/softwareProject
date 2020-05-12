@@ -1,49 +1,44 @@
 <!DOCTYPE html>
 <%- include('partials/navbar') %>
-  <div class="auctionCreate">
-    <form class="Create" action="/startauction" method="post">
-      <table>
-        <tr>
-          <th><label for="productName">Product Name:</label></th>
-          <td><input type="text" name="productName" value=""></td>
-        </tr>
+    <div class="card" style="width:600px;">
+      <div class="card-body">
 
-      <tr>
+        <form action="/startauction" method="POST">
 
-        <th><label for="productCategory">Category:</label></th>
-        <td>
-        <select class="Category" name="productCategory">
-          <option value="Clothes">Clothes</option>
-          <option value="shoes">Shoes</option>
-          <option value="books">Books</option>
-        </select>
-      </td>
-      </tr>
+          <div class="form-group">
+            <label for="itemName">Item Name:</label>
+            <input type="text" class="form-control" name="itemName" required>
+          </div>
 
-      <tr>
-          <th><label for="productPrice">Product Base Price:</label></th>
-          <td><input type="text" name="productBasePrice" value=""></td>
-        </tr>
+          <div class="form-group">
+            <label for="itemCategory">Category:</label>
+            <select class="Category" name="itemCategory" required>
+              <option value="Clothes">Clothes</option>
+              <option value="shoes">Shoes</option>
+              <option value="books">Books</option>
+            </select>
+          </div>
 
-        <tr>
-            <th><label for="productDuration">Duration:</label></th>
-            <td><input type="text" name="productDuration" value="" placeholder="enter in hours"></td>
-          </tr>
+          <div class="form-group">
+            <label for="basePrice">Starting Price:</label>
+            <input type="Number" class="form-control" name="basePrice" min="1" required>
+          </div>
 
-<tr>
-  <th>    <label for="myfile">Choose Images:</label></th>
-  <td>        <input type="file" id="myfile" name="myfile" multiple>
-</td>
-</tr>
+          <div class="form-group">
+            <label for="itemDuration">Duration:</label>
+            <input type="Number" class="form-control" name="itemDuration" min="1" required>
+          </div>
 
-        <tr>
-          <th><label for="productDescription">Product Description:</label></th>
-          <td>  <textarea name="productDescription" rows="4" cols="50"></textarea></td>
-        </tr>
+          <div class="form-group">
+            <label for="itemDescription">Description:</label>
+            <textarea name="itemDescription" rows="4" cols="50" required></textarea>
+          </div>
 
-      </table>
-<button type="submit" name="button">Start Auction</button>
-    </form>
-  </div>
-</section>
+          <button type="submit" class="btn btn-dark">Login</button>
+
+        </form>
+
+      </div>
+    </div>
+
 <%- include('partials/footer') %>
