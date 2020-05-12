@@ -1,25 +1,28 @@
-<!DOCTYPE html>
 <%- include('partials/navbar') %>
 
     <div class="Manage_auctions">
-
-    <div class="row no-gutters card_margin">
-
-    <div class="col-md-8">
-      <div>
-        <h3 class="product_name">Product Name:</h3>
-        <h5>Auction Ends in:</h5>
-        <p class="">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <span class="bid_details"><small class="text-muted">Participants:10</small></span>
-          <span class="bid_details"><small class="text-muted">Current Bid=Rs.500</small></span>
-          <span class="bid_details"><small class="text-muted">Your Bid=Rs.500</small></span>
-          <button class="btn btn-primary "type="submit" name="button">Join Bid</button>
+<div class="jumbotron">
+  <h1>Your Intrests</h1>
+  <h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit, </h5>
+</div>
+      <div class="card-deck row">
+        <% items.forEach(function(item){ %>
+          <div class="col-md-3">
+                  <div class="card m-3 p-1" >
+                      <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+                      <div class="card-block">
+                        <h5><%= item.name %></h5>
+                        <p><small><%= AName %></small></p>
+                        <p>Current Price: <strong><%= item.currentBid %></strong></p>
+                        <p>Highest Bidder:   <strong><%= item.currentBidder %></strong></p>
+                        <p>Participants: <strong><%= item.participants.length %></strong></p>
+                      </div>
+                      <%- include("bidUpdate",{Item:item}) %>
+                      <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
+                  </div>
+              </div>
+        <% }) %>
       </div>
-    </div>
-
-    <div class="col-md-4">
-      <img src="images/auction.jpg" class="card-img image_size" alt="...">
-    </div>
     </div>
 
 <%- include('partials/footer') %>

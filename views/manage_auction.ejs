@@ -2,21 +2,24 @@
 <%- include('partials/navbar') %>
     <div class="Manage_auctions">
       <div class="jumbotron">
-      <h1>Hello</h1>
+      <h1>Your Auctions</h1>
+      <h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit, </h5>
       </div>
 
       <div class="card-deck row">
-<% auctionList.forEach(function(items){ %>
+<% items.forEach(function(item){ %>
   <div class="col-md-3">
-          <div class="card">
+          <div class="card m-3 p-1" >
               <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
               <div class="card-block">
-                <h5><%= items.name %></h5>
-                <p><small>By name</small></p>
-                <p>Current Price:<%= items.currentBid %></p>
-                <p>Ends in:</p>
+                <h5><%= item.name %></h5>
+                <p><small><%= AName %></small></p>
+                <p>Current Price: <strong><%= item.currentBid %></strong></p>
+                <p>Highest Bidder:   <strong><%= item.currentBidder %></strong></p>
+                <p>Participants: <strong><%= item.participants.length %></strong></p>
               </div>
-              <a href="/items/<%= items._id %>" class="btn btn-outline-dark btn-lg btn-block" role="button">View Details</a>
+              <%- include("bidUpdate",{Item:item}) %>
+              <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
           </div>
       </div>
 <% }) %>

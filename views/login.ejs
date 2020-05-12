@@ -1,18 +1,26 @@
 <%- include("partials/altnavbar") %>
 
+<% if (loginMessage.length>0) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong><%= loginMessage %></strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+  <% } %>
 
 <div class="container mt-5">
-  <h1>Login</h1>
+  <h1 style="text-align:center;">Login</h1>
 
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-8 m-auto">
       <div class="card">
         <div class="card-body">
 
           <form action="/login" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control" name="email" required>
+              <input type="email" class="form-control" name="email" pattern="^[a-z]{1,30}[0-9]{6}@[m][e][c][h][y][d]\.[a][c]\.[i][n]$" required>
             </div>
             <div class="form-group">
               <label for="password">Password</label>

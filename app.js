@@ -28,8 +28,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //mongoose connnection and schemas
-mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+//mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex",true);
 
 const auctionSchema=new mongoose.Schema({
@@ -41,16 +41,24 @@ const auctionSchema=new mongoose.Schema({
   description:String,
   startedOn:Date,
   currentBid:Number,
-  currentBidder:String
+  currentBidder:String,
+  participants:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    unique:true
+  }]
 });
-
 auctionSchema.plugin(passportLocalMongo, { usernameUnique: false});
 
 const userSchema=new mongoose.Schema({
   username:String,
   email:String,
   password:String,
-  joinedAuction:[]
+  joinedAuction:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'Auction',
+    unique:true
+  }]
 });
 userSchema.plugin(passportLocalMongo,{usernameField: "email"});
 
@@ -73,7 +81,7 @@ app.get('/',function(req,res){
 
 //login route
 app.get('/login',function(req,res){
-    res.render('login');
+    res.render('login',{loginMessage:req.flash("loginError")});
 });
 
 app.post('/login',function(req,res){
@@ -84,10 +92,10 @@ app.post('/login',function(req,res){
 
     req.login(user,function(err){
       if(err){
-        console.log(err);
+        req.flash("loginError","Invalid Username or Password");
         res.redirect('/login');
       }else{
-        passport.authenticate("local",{failureFlash:true,failureRedirect: "/login"})(req,res,function(){
+          passport.authenticate("local",{failureFlash:true,failureRedirect: "/login"})(req,res,function(){
           res.redirect("/home");
         });
     }
@@ -122,6 +130,7 @@ app.get('/home',function(req,res){
         }else{
            res.render("home", {
              post: items,
+             AName:req.user.username,
              welcomeMessage:req.flash("Welcome"),
              startedAuction:req.flash("auctionStarted"),
              unableBid:req.flash("errorBid"),
@@ -146,7 +155,6 @@ res.redirect("/login");
 
 app.post("/startauction", function(req,res){
   if(req.isAuthenticated()){
-
   const newItem=new Auction({
     startedBy:req.user.id,
     name:req.body.itemName,
@@ -182,7 +190,18 @@ console.log(req.body.bidAmount);
 
 //view current auction routes
 app.get('/viewbids',function(req,res){
-  res.render('view_bids');
+  if(req.isAuthenticated()){
+  Auction.find({participants:req.user.id},function(err,results){
+    if (err) {
+      console.log(err);
+    }else{
+      console.log(results);
+    res.render('view_bids',{items:results,AName:req.user.username});
+    }
+  });
+}else{
+  res.redirect("/login");
+}
 });
 
 //manageauctions route
@@ -193,14 +212,14 @@ app.get('/manageauctions',function(req,res){
         console.log(err);
         }else{
           res.render('manage_auction', {
-            auctionList: result
+            items: result,AName:req.user.username
             });
          }
        });
   }else{
     res.redirect("/login");
   }
-})
+});
 
 //individual items route
 app.get("/items/:itemId", function(req,res){
@@ -221,7 +240,7 @@ app.get("/items/:itemId", function(req,res){
 //bid update route under testing...
 app.post("/placeBid/:itemId",function(req,res){
   var productId=req.params.itemId;
-      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder":req.user.id}},{upsert:true},function(err,result){
+      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder":req.user.username}},{upsert:true},function(err,result){
         if(err){
           console.log(err);
           req.flash("errorBid","You cannot place a Bid for your own Auction")
@@ -231,6 +250,14 @@ app.post("/placeBid/:itemId",function(req,res){
           res.redirect("/home");
         }
       });
+      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId},{participants:{$ne:req.user.id}}]},{$push:{participants:req.user.id}},{upsert:true},function(err,result){
+        if(err){
+          console.log(err);
+        }else{
+          console.log(result);
+        }
+      });
+
 });
 
 //logout route

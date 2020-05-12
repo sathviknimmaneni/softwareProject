@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%- include('partials/navbar') %>
-    <div class="card" style="width:600px;">
-      <div class="card-body">
+    <div class="card ml-auto mr-auto mt-3 mb-3" style="width:600px;margin:auto;">
+      <div class="card-body m-3">
 
         <form action="/startauction" method="POST">
 
@@ -12,10 +12,13 @@
 
           <div class="form-group">
             <label for="itemCategory">Category:</label>
-            <select class="Category" name="itemCategory" required>
-              <option value="Clothes">Clothes</option>
+            <select class="form-control" name="itemCategory" required>
+              <option value="shoes">Electronics</option>
               <option value="shoes">Shoes</option>
               <option value="books">Books</option>
+              <option value="books">Sports</option>
+              <option value="shoes">Fashion</option>
+              <option value="books">Others</option>
             </select>
           </div>
 
@@ -31,10 +34,10 @@
 
           <div class="form-group">
             <label for="itemDescription">Description:</label>
-            <textarea name="itemDescription" rows="4" cols="50" required></textarea>
+            <textarea name="itemDescription" class="form-control" rows="4" cols="50" required></textarea>
           </div>
 
-          <button type="submit" class="btn btn-dark">Login</button>
+          <button type="submit" class="btn btn-dark">Start</button>
 
         </form>
 
