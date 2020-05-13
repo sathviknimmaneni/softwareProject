@@ -8,7 +8,6 @@ var cookieParser = require('cookie-parser');
 const passport=require('passport');
 const passportLocalMongo=require('passport-local-mongoose');
 var flash = require('connect-flash');
-const { Timer } = require('easytimer');
 
 const app = express();
 
@@ -28,8 +27,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //mongoose connnection and schemas
-mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+//mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.set("useCreateIndex",true);
 
 const auctionSchema=new mongoose.Schema({
@@ -76,7 +75,11 @@ app.get('/',function(req,res){
 
 //login route
 app.get('/login',function(req,res){
+  if(req.isAuthenticated()){
+      res.redirect("/home");
+  }else{
     res.render('login',{loginMessage:req.flash("loginError")});
+  }
 });
 
 app.post('/login',function(req,res){
@@ -99,8 +102,12 @@ app.post('/login',function(req,res){
 
 //signup route
 app.get('/signup',function(req,res){
-  res.render('signup');
-})
+  if(req.isAuthenticated()){
+    res.redirect("/home");
+  }else{
+    res.render('signup');
+  }
+});
 
 app.post('/signup',function(req,res){
   User.register({email:req.body.email,username:req.body.username},req.body.password,function(err,user){
@@ -119,22 +126,24 @@ app.post('/signup',function(req,res){
 //home route
 app.get('/home',function(req,res){
   if(req.isAuthenticated()){
-    Auction.find({}, function(err, items){
-        if(err){
-        console.log(err);
-        }else{
-           res.render("home", {
-             post: items,
-             AName:req.user.username,
-             welcomeMessage:req.flash("Welcome"),
-             startedAuction:req.flash("auctionStarted"),
-             unableBid:req.flash("errorBid"),
-             placedBid:req.flash("successBid"),
-             signedUp:req.flash("successSignUp")
-             });
-         }
-       });
-  }else{
+
+  Auction.find({}, function(err, items){
+      if(err){
+      console.log(err);
+      }else{
+            res.render("home", {
+              post: items,
+              AName:items.startedBy,
+              welcomeMessage:req.flash("Welcome"),
+              startedAuction:req.flash("auctionStarted"),
+              unableBid:req.flash("errorBid"),
+              placedBid:req.flash("successBid"),
+              signedUp:req.flash("successSignUp")
+              });
+          }
+        });
+}
+else{
     res.redirect("/login");
   }
 });
@@ -224,7 +233,13 @@ app.get("/items/:itemId", function(req,res){
       if(err){
         console.log(err);
       }else{
-          res.render("bids",{items:item});
+          User.findOne({_id:item.startedBy},function(err,foundUser){
+            if(err){
+              console.log(err);
+            }else{
+            res.render("bids",{items:item,SName:foundUser.username,CDetails:foundUser.email});
+            }
+          });
         }
    });
  }else{
@@ -248,8 +263,6 @@ app.post("/placeBid/:itemId",function(req,res){
       Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId},{participants:{$ne:req.user.id}}]},{$push:{participants:req.user.id}},{upsert:true},function(err,result){
         if(err){
           console.log(err);
-        }else{
-          console.log(result);
         }
       });
 
