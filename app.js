@@ -54,11 +54,6 @@ const userSchema=new mongoose.Schema({
   username:String,
   email:String,
   password:String,
-  joinedAuction:[{
-    type:mongoose.Schema.Types.ObjectId,
-    ref: 'Auction',
-    unique:true
-  }]
 });
 userSchema.plugin(passportLocalMongo,{usernameField: "email"});
 
