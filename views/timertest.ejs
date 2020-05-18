@@ -28,6 +28,7 @@ var x = setInterval(function() {
     clearInterval(x);
     document.getElementById("<%= element %>").innerHTML = "FINISHED";
     document.getElementById("BidUpdate").disabled = true;
+    document.getElementById("bidderDesc").innerHTML = "Auction Winner";
   }
 }, 1000);
 
