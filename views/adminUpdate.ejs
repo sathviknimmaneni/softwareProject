@@ -2,11 +2,11 @@
     <div class="card ml-auto mr-auto mt-3 mb-3" style="width:600px;margin:auto;">
       <div class="card-body m-3">
 
-        <form action="/startauction" method="POST">
+        <form action="/adminupdate/<%= Item.id %>" method="POST">
 
           <div class="form-group">
             <label for="itemName">Item Name:</label>
-            <input type="text" class="form-control" name="itemName" required>
+            <input type="text" class="form-control" name="itemName" value="<%= Item.name %>" required>
           </div>
 
           <div class="form-group">
@@ -23,26 +23,22 @@
 
           <div class="form-group">
             <label for="basePrice">Starting Price:</label>
-            <input type="Number" class="form-control" name="basePrice" min="1" required>
+            <input type="Number" class="form-control" name="basePrice" min="1" value="<%= Item.basePrice %>" required>
           </div>
 
           <div class="form-group">
             <label for="itemDuration">Duration:</label>
-            <input type="Number" class="form-control" name="itemDuration" min="1" placeholder="Enter duration in Hrs" required>
+            <input type="Number" class="form-control" name="itemDuration" min="1" value="<%= Item.duration%>" required>
           </div>
 
           <div class="form-group">
             <label for="itemDescription">Description:</label>
-            <textarea name="itemDescription" class="form-control" rows="4" cols="50" required></textarea>
+            <textarea name="itemDescription" class="form-control" rows="4" cols="50" required><%= Item.description %></textarea>
           </div>
-
-<div style="text-align:center;">
-  <button type="submit" class="btn btn-lg btn-dark col-sm-12 col-lg-6">Start Auction</button>
-  <br>
-  <a href="/startauction" class="btn btn-lg btn-outline-danger col-sm-12 col-lg-6" style="margin-top:10px;">Discard Changes</a>
+<div class="col" style="margin-left:35%;">
+            <button type="submit" class="btn btn-dark" style="margin-left:auto;">Update</button>
 </div>
-
-        </form>
+</form>
 
       </div>
     </div>

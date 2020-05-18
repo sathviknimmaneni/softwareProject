@@ -7,7 +7,9 @@ const session=require('express-session');
 var cookieParser = require('cookie-parser');
 const passport=require('passport');
 const passportLocalMongo=require('passport-local-mongoose');
-var flash = require('connect-flash');
+const flash = require('connect-flash');
+const moment=require("moment");
+const $=require("jquery");
 
 const app = express();
 
@@ -39,6 +41,7 @@ const auctionSchema=new mongoose.Schema({
   duration:Number,
   description:String,
   startedOn:Date,
+  endOn:Date,
   currentBid:Number,
   currentBidder:String,
   participants:[{
@@ -53,8 +56,14 @@ const userSchema=new mongoose.Schema({
   username:String,
   email:String,
   password:String,
+  role:{type:String,default:"user"},
+  flag:{type:Boolean,default:true}
 });
-userSchema.plugin(passportLocalMongo,{usernameField: "email"});
+userSchema.plugin(passportLocalMongo,{usernameField: "email",passwordField:"password",findByUsername: function(model, queryParameters) {
+    // Add additional query parameter - AND condition - active: true
+    queryParameters.flag = true;
+    return model.findOne(queryParameters);
+  }});
 
 const Auction=mongoose.model("Auction",auctionSchema);
 const User=mongoose.model("User",userSchema);
@@ -63,13 +72,22 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+const isAdmin = function (req, res, next) {
+   if (req.user.role == "Admin"){
+     return next ();
+   }else{
+     res.redirect("error404");
+   }
+}
+
+
 // starting route
 app.get('/',function(req,res){
   if(req.isAuthenticated()){
-    req.flash("Welcome","welcome back,")
-    res.redirect("/home");
+      req.flash("Welcome","welcome back,")
+      res.redirect("/home");
   }else{
-    res.render("starting");
+    res.render('starting');
   }
 });
 
@@ -78,27 +96,30 @@ app.get('/login',function(req,res){
   if(req.isAuthenticated()){
       res.redirect("/home");
   }else{
-    res.render('login',{loginMessage:req.flash("loginError")});
+    res.render('login',{loginError:req.flash("loginError")});
   }
 });
 
-app.post('/login',function(req,res){
-  user = new User({
-    email:req.body.email,
-    password:req.body.password
-  });
+//
+// app.post('/login',function(req,res){
+//   user = new User({
+//     email:req.body.email,
+//     password:req.body.password
+//   });
+//
+//     req.login(user,function(err){
+//       if(err){
+//         req.flash("loginError","invalid username or password");
+//         res.redirect('/login');
+//       }else{
+//         passport.authenticate("local")(req,res,function(){
+//           res.redirect("/home");
+//         });
+//     }
+// });
+// });
 
-    req.login(user,function(err){
-      if(err){
-        req.flash("loginError","Invalid Username or Password");
-        res.redirect('/login');
-      }else{
-          passport.authenticate("local",{failureFlash:true,failureRedirect: "/login"})(req,res,function(){
-          res.redirect("/home");
-        });
-    }
-});
-});
+app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:true}));
 
 //signup route
 app.get('/signup',function(req,res){
@@ -116,7 +137,7 @@ app.post('/signup',function(req,res){
     res.redirect('/signup');
   }else{
     passport.authenticate("local")(req,res,function(){
-      req.flash("successSignUp","Your acount has been succesfully created..")
+      req.flash("successSignUp","Your account has been succesfully created..")
       res.redirect('/home');
     });
   }
@@ -167,7 +188,8 @@ app.post("/startauction", function(req,res){
     currentBid:req.body.basePrice,
     duration:req.body.itemDuration,
     description:req.body.itemDescription,
-    startedOn:new Date()
+    startedOn:moment().format("ddd MMM DD YYYY hh:mm:ss"),
+    endOn:moment().add(req.body.itemDuration,"hours")
   });
 
   newItem.save(function(err){
@@ -199,8 +221,7 @@ app.get('/viewbids',function(req,res){
     if (err) {
       console.log(err);
     }else{
-      console.log(results);
-    res.render('view_bids',{items:results,AName:req.user.username});
+        res.render('view_bids',{items:results});
     }
   });
 }else{
@@ -216,7 +237,8 @@ app.get('/manageauctions',function(req,res){
         console.log(err);
         }else{
           res.render('manage_auction', {
-            items: result,AName:req.user.username
+            items: result,
+            AName:req.user.username
             });
          }
        });
@@ -237,7 +259,10 @@ app.get("/items/:itemId", function(req,res){
             if(err){
               console.log(err);
             }else{
-            res.render("bids",{items:item,SName:foundUser.username,CDetails:foundUser.email});
+            res.render("bids",{
+              items:item,
+              SName:foundUser.username,
+              CDetails:foundUser.email});
             }
           });
         }
@@ -265,8 +290,90 @@ app.post("/placeBid/:itemId",function(req,res){
           console.log(err);
         }
       });
-
 });
+
+
+
+//admin route
+app.get("/admin",isAdmin,function(req,res){
+  if(req.isAuthenticated()){
+    Auction.find({},function(err,results){
+      if(err){
+        console.log(err);
+      }else{
+        User.find({},function(err,users){
+          if (err) {
+            console.log(err);
+          }else{
+            res.render("adminView",{
+              auctions:results,
+              AName:results.startedBy,
+              Users:users,
+              });
+          }
+        });
+      }
+    });
+  }else{
+    res.redirect("/login");
+  }
+});
+
+app.get("/adminupdate/:itemId",isAdmin,function(req,res){
+if(req.isAuthenticated()){
+  var productId=req.params.itemId;
+  Auction.findOne({_id:productId},function(err,foundItem){
+    if(err){
+      console.log(err);
+    }else{
+      res.render("adminUpdate",{Item:foundItem});
+    }
+  })
+}else{
+  res.redirect("/login");
+}
+});
+
+app.post("/adminupdate/:itemId",function(req,res){
+  var productId=req.params.itemId;
+  Auction.updateOne({_id:productId},{$set:{
+    "name":req.body.itemName,
+    "category":req.body.itemCategory,
+    "duration":req.body.itemDuration,
+    "description":req.body.itemDescription
+  }
+},function(err,result){
+  if(err){
+    console.log(err);
+  }else{
+    res.redirect("/admin");
+  }
+});
+});
+
+app.post("/users/:userId/:Uflag",function(req,res){
+  var UId=req.params.userId;
+  var UFlag=req.params.Uflag;
+  if(UFlag == "true"){
+    User.updateOne({_id:UId},{$set:{"flag":false}},function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        res.redirect("/admin");
+      }
+    });
+}
+    else{
+    User.updateOne({_id:UId},{$set:{"flag":true}},function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        res.redirect("/admin");
+      }
+    });
+  }
+});
+
 
 //logout route
 app.get('/logout',function(req,res){

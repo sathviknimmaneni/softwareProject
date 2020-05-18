@@ -1,8 +1,8 @@
 <%- include("partials/altnavbar") %>
 
-<% if (loginMessage.length>0) { %>
+<% if(loginError.length>0) { %>
   <div class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong><%= loginMessage %></strong>
+  <strong><%= loginError%></strong>
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -20,11 +20,11 @@
           <form action="/login" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control" name="email" pattern="^[a-z]{1,30}[0-9]{6}@[m][e][c][h][y][d]\.[a][c]\.[i][n]$" required>
+              <input type="email" class="form-control" name="email" placeholder="Enter MEC mail Id" required>
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" name="password" required>
+              <input type="password" class="form-control" name="password" placeholder="Password field" equired>
             </div>
             <button type="submit" class="btn btn-dark">Login</button>
           </form>

@@ -1,0 +1,69 @@
+<%- include("partials/navbar") %>
+
+<div class="row">
+  <div class="col-2">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Auctions</a>
+      <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Users</a>
+      <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
+    </div>
+  </div>
+  <div class="col-10">
+    <div class="tab-content" id="v-pills-tabContent">
+
+<!-- auction Items -->
+      <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+        <div class="card-deck row">
+          <% auctions.forEach(function(item){ %>
+            <div class="col-md-3">
+                    <div class="card m-3 p-1" >
+                        <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+                        <div class="card-block">
+                          <h5><%= item.name %></h5>
+                          <p><small><%= AName %></small></p>
+                          <p>Current Price: <strong><%= item.currentBid %></strong></p>
+                          <p>Highest Bidder:   <strong><%= item.currentBidder %></strong></p>
+                          <p>Participants: <strong><%= item.participants.length %></strong></p>
+                        </div>
+                        <a href="/adminupdate/<%= item._id %>" class="btn btn-dark btn-lg btn-block mt-2" role="button">Update Details</a>
+                        <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
+                        <%- include("timertest",{element:item.id,Dline:item.endOn}) %>
+                      </div>
+                  </div>
+                <% }) %>
+          </div>
+        </div>
+
+<!-- users -->
+      <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+        <div class="card-deck row">
+          <% Users.forEach(function(user){ %>
+            <div class="col-md-3">
+                    <div class="card m-3 p-1" >
+                        <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+                        <div class="card-block">
+                          <h5><%= user.username %></h5>
+                          <p><small><%= user.email %></small></p>
+                          <p><%= user.role %></p>
+                          <p>Is active: <strongid id="<%= user.id %>"><%= user.flag %></strong></p>
+                          <script type="text/javascript">
+                            if(<%= user.flag %> == false){
+                             document.getElementById("<%= user.id %>").style.color = "#ff0000";
+                           }else{
+                             document.getElementById("<%= user.id %>").style.color ="green";
+                           }
+                          </script>
+                        </div>
+                        <form class="" action="/users/<%= user._id %>/<%= user.flag%>" method="post">
+                        <button type="submit" name="button"class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">Block/ Unblock</button>
+                        </form>
+                      </div>
+                  </div>
+                <% }) %>
+          </div>
+      </div>
+      <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
+    </div>
+  </div>
+</div>
+<%- include("partials/footer") %>

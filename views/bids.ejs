@@ -1,84 +1,108 @@
 <%- include('partials/navbar') %>
+<style>
+  #features{
+    padding: 7% 15%;
+    position: relative;
+    z-index: 1;
+    background-color: #fff;
+  }
 
+  .feat-text{
+    color: #8f8f8f;
+    padding: 0 5%;
+  }
+
+  #BidDetails{
+    text-align:center;
+  }
+</style>
   <!-- bid intro and stuff   -->
-  <div class="row no-gutters row_margin" style="background-color: #e6ffff;padding-bottom: 50px;">
-    <div class="col-md-6">
-      <div>
-        <h1><%= items.name %></h1>
-        <h5><%= SName %></h5>
-        <hr>
+  <section id="BidDetails" class="container-fluid mt-4">
+
+        <div class="col-md-12">
+        <div>
+          <h1><%= items.name %></h1>
+          <h5><%= SName %></h5>
+          <hr>
+
+          <h2>Starting Bid:<%= items.basePrice%></h2>
+          <h2>Current Price:<%= items.currentBid%></h2>
+
+  <div class="col-md-6" style="margin:30px auto;">
+    <%- include('bidUpdate',{Item:items}) %>
+  </div>
+  </div>
+      </div>
 
 
-        <div class="">
+      <!-- bid details and stuff -->
 
-        </div>
-        <table>
-          <tr>
-            <th>Start Bid</th>
-            <td><%= items.basePrice %></td>
-            <th>Current Bid</th>
-            <td><%= items.currentBid %></td>
-          </tr>
-          <tr>
-            <th>Start Date</th>
-            <td><%= items.startedOn %></td>
-            <th>Ends in:</th>
-            <td>time</td>
-          </tr>
-        </table>
+      <!-- cards -->
+  <div id="feature-cards" class="m-4">
 
-<%- include('bidUpdate',{Item:items}) %>
+        <div class="row">
+          <div class="col-lg-4">
+            <h3 class="feat-head text-center" id="waitCurrent"><%= items.currentBidder%></h3>
+            <p class="feat-text  text-center">currentBidder</p>
           </div>
-    </div>
-</div>
 
+          <div class="col-lg-4">
+            <h3 class="feat-head text-center" id="count<%= items.id%>"></h3>
+            <p class="feat-text  text-center" >countdown</p>
+          </div>
+          <%- include("timertest",{element:"count"+items.id,Dline:items.endOn}) %>
+          <div class="col-lg-4">
+            <h3 class="feat-head text-center"><%= items.participants.length%></h3>
+            <p class="feat-text  text-center">participants count</p>
+          </div>
 
-    <!-- bid details and stuff -->
-    <div class="row no-gutters row_margin" style="margin-bottom:50px;">
-
-      <div class="col-md-6">
-        <div class="description">
-          <h3>Description</h3>
-          <p><%= items.description %></p>
         </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="details_table">
-          <h3>Details:</h3>
-          <table class="DTable">
-            <tr>
-              <th>Product Name</th>
-              <td><%= items.name %></td>
-            </tr>
-            <tr>
-              <th>Product By</th>
-              <td><%= SName %></td>
-            </tr>
-            <tr>
-              <th>Category</th>
-              <td><%= items.category %></td>
-            </tr>
-            <tr>
-              <th>Base price</th>
-              <td><%= items.basePrice %></td>
-            </tr>
-            <tr>
-              <th>Auction Start</th>
-              <td><%= items.startedOn %></td>
-            </tr>
-            <tr>
-              <th>Auction end</th>
-              <td>some date</td>
-            </tr>
-            <tr>
-              <th>Contact</th>
-              <td><%= CDetails %></td>
-            </tr>
-          </table>
-        </div>
-
-      </div>
+  </div>
+  <!-- cards end -->
+  <div class="col-md-12 m-4">
+    <div class="details_table">
+      <h3>Details:</h3>
+      <table class="DTable" align="center">
+        <tr>
+          <th>Product Name</th>
+          <td><%= items.name %></td>
+        </tr>
+        <tr>
+          <th>Product By</th>
+          <td><%= SName %></td>
+        </tr>
+        <tr>
+          <th>Category</th>
+          <td><%= items.category %></td>
+        </tr>
+        <tr>
+          <th>Base price</th>
+          <td><%= items.basePrice %></td>
+        </tr>
+        <tr>
+          <th>Auction Start</th>
+          <td><%= items.startedOn %></td>
+        </tr>
+        <tr>
+          <th>Auction end</th>
+          <td><%= items.endOn %></td>
+        </tr>
+        <tr>
+          <th>Contact</th>
+          <td><%= CDetails %></td>
+        </tr>
+      </table>
     </div>
 
+  </div>
+
+        <div class="col-md-12 m-4">
+          <div class="description">
+            <h3>Description</h3>
+            <p><%= items.description %></p>
+          </div>
+        </div>
+
+
+  </section>
 <%- include("partials/footer") %>
