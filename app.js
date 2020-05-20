@@ -4,22 +4,32 @@ const bodyParser=require('body-parser');
 const ejs=require('ejs');
 const mongoose=require('mongoose');
 const session=require('express-session');
+const MongoStore = require('connect-mongo')(session);
 var cookieParser = require('cookie-parser');
 const passport=require('passport');
 const passportLocalMongo=require('passport-local-mongoose');
 const flash = require('connect-flash');
 const moment=require("moment");
+const socket=require("socket.io");
+const passportSocketIo = require("passport.socketio");
 const $=require("jquery");
 
 const app = express();
 
 app.set('view engine', 'ejs');
 
+//mongoose connnection and schemas
+mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.set("useCreateIndex",true);
+
 app.use(bodyParser.urlencoded({extended: true}));
  app.use(express.static("public"));
  app.use(cookieParser('secret'));
  app.use(session({
+   key:'express.sid',
    secret:process.env.SECRET,
+   store: new MongoStore({mongooseConnection:mongoose.connection}),
    resave:false,
    saveUninitialized: false,
  }));
@@ -28,10 +38,6 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-//mongoose connnection and schemas
-mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-mongoose.set("useCreateIndex",true);
 
 const auctionSchema=new mongoose.Schema({
   startedBy:String,
@@ -65,8 +71,15 @@ userSchema.plugin(passportLocalMongo,{usernameField: "email",passwordField:"pass
     return model.findOne(queryParameters);
   }});
 
+const messageSchema=new mongoose.Schema({
+    username:String,
+    message:String,
+});
+messageSchema.plugin(passportLocalMongo,{usernameUnique:false});
+
 const Auction=mongoose.model("Auction",auctionSchema);
 const User=mongoose.model("User",userSchema);
+const Message=mongoose.model("Message",messageSchema);
 
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
@@ -374,6 +387,57 @@ app.post("/users/:userId/:Uflag",function(req,res){
   }
 });
 
+//server initilization
+var server = app.listen(process.env.PORT || 3000, function() {
+  console.log("Server started on port 3000");
+});
+
+
+app.get("/chatroom",function(req,res){
+  if(req.isAuthenticated()){
+    //----- Chatroom details and stuff ----------
+
+      // Socket setup & pass server
+      const io = socket(server);
+      io.use(passportSocketIo.authorize({
+        key:          'express.sid',       //make sure is the same as in your session settings in app.js
+        secret:       process.env.SECRET,      //make sure is the same as in your session settings in app.js
+      store: new MongoStore({mongooseConnection:mongoose.connection}),
+      }));
+
+      io.on('connection', (socket) => {
+          console.log('made socket connection', socket.id);
+
+          // Handle chat event
+          socket.on('chat', function(data){
+               console.log(data);
+               const newMessage = new Message({username:data.handle,message:data.message});
+               newMessage.save(function(err){
+                 if(err){
+                   console.log(err);
+                 }
+               });
+              io.sockets.emit('chat', data);
+          });
+
+          // Handle typing event
+          socket.on('typing', function(data){
+              socket.broadcast.emit('typing', data);
+          });
+      });
+
+      Message.find({},function(err,results){
+        if(err){
+          console.log(err);
+        }else{
+          res.render("chatroom",{messages:results,handle:req.user.username});
+        }
+      });
+  }else{
+    res.redirect("/");
+  }
+});
+//-------- chatroom end -------
 
 //logout route
 app.get('/logout',function(req,res){
@@ -383,9 +447,4 @@ app.get('/logout',function(req,res){
 
 app.get('*', function(req, res){
   res.status(404).render('error404');
-});
-
-//server initilization
-app.listen(process.env.PORT || 3000, function() {
-  console.log("Server started on port 3000");
 });

@@ -1,0 +1,28 @@
+<%- include("partials/navbar") %>
+
+        <div id="chatRoom" class="card col-lg-10 m-auto">
+          <div class="card-body">
+
+              <h2>Project Name</h2>
+              <div id="chat-window">
+                <% messages.forEach(function(result){ %>
+                  <div id="pastMessages"><p><strong><%= result.username %>: </strong><%= result.message%></p></div>
+                <% }) %>
+                  <div id="output"></div>
+                  <div id="feedback"></div>
+              </div>
+              <input type="text" id="handle" value="<%= handle%>" disabled hidden>
+              <div class="form-group">
+                <label for="messageText"> Your Message:</label>
+                <input id="message" type="text" class="form-control" name="messageText" placeholder="Message" required>
+              </div>
+
+              <button id="send" class="btn btn-lg btn-outline-dark ml-auto">Send</button>
+
+          </div>
+        </div>
+
+
+    </body>
+    <script src="scripts/chat.js"></script>
+</html>
