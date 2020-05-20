@@ -50,7 +50,7 @@
             <h3 class="feat-head text-center" id="count<%= items.id%>"></h3>
             <p class="feat-text  text-center" >countdown</p>
           </div>
-          <%- include("timertest",{element:"count"+items.id,Dline:items.endOn}) %>
+          <%- include("timertest",{Element:"count"+items.id,Dline:items.endOn}) %>
           <div class="col-lg-4">
             <h3 class="feat-head text-center"><%= items.participants.length%></h3>
             <p class="feat-text  text-center">participants count</p>
@@ -105,4 +105,5 @@
 
 
   </section>
+
 <%- include("partials/footer") %>
