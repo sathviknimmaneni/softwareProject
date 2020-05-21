@@ -24,10 +24,9 @@ const app = express();
 app.set('view engine', 'ejs');
 
 //mongoose connnection and schemas
-var mongoURL="mongodb://localhost:27017/auctionDB";
-//mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-const conn=mongoose.createConnection("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+const conn=mongoose.createConnection("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 
 
 mongoose.set("useCreateIndex",true);
@@ -113,7 +112,7 @@ conn.once("open",function(){
 
 //storage engine..
 var storage = new GridFsStorage({
-  url: "mongodb://localhost:27017/auctionDB",
+  url: "mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
