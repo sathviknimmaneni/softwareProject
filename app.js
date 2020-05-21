@@ -12,6 +12,11 @@ const flash = require('connect-flash');
 const moment=require("moment");
 const socket=require("socket.io");
 const passportSocketIo = require("passport.socketio");
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid=require("gridfs-stream");
+const path=require("path");
+const crypto=require("crypto");
 const $=require("jquery");
 
 const app = express();
@@ -19,8 +24,12 @@ const app = express();
 app.set('view engine', 'ejs');
 
 //mongoose connnection and schemas
-mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
-//mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+var mongoURL="mongodb://localhost:27017/auctionDB";
+//mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+const conn=mongoose.createConnection("mongodb://localhost:27017/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
+
+
 mongoose.set("useCreateIndex",true);
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -49,11 +58,12 @@ const auctionSchema=new mongoose.Schema({
   startedOn:Date,
   endOn:Date,
   currentBid:Number,
-  currentBidder:String,
+  currentBidder:{name:String,contact:String},
   participants:[{
     type:mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  }]
+  }],
+  image:String
 });
 auctionSchema.plugin(passportLocalMongo, { usernameUnique: false});
 
@@ -84,6 +94,7 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
 const isAdmin = function (req, res, next) {
    if (req.user.role == "Admin"){
      return next ();
@@ -91,6 +102,58 @@ const isAdmin = function (req, res, next) {
      res.redirect("error404");
    }
 }
+
+//girdfs and multer configuration
+let gfs;
+
+conn.once("open",function(){
+  gfs=Grid(conn.db,mongoose.mongo);
+  gfs.collection("uploads");
+})
+
+//storage engine..
+var storage = new GridFsStorage({
+  url: "mongodb://localhost:27017/auctionDB",
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) {
+          return reject(err);
+        }
+        const fileName = buf.toString('hex') + path.extname(file.originalname);
+        const fileInfo = {
+          filename: fileName,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo);
+      });
+    });
+  }
+});
+const upload = multer({ storage });
+
+
+//api for getting image
+app.get("/image/:filename",function(req,res){
+gfs.files.findOne({filename:req.params.filename},function(err,file){
+
+  if(!file || file.length === 0){
+    return res.status(404).json({
+      err:"No files"
+    });
+    }
+
+    if(file.contentType === "image/jpeg" || file.contentType === "image/png"){
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    }else{
+      return res.status(404).json({
+        err:'not an image'
+      });
+    }
+
+})
+});
 
 
 // starting route
@@ -190,7 +253,7 @@ res.redirect("/login");
 }
 });
 
-app.post("/startauction", function(req,res){
+app.post("/startauction",upload.single("uploadedImage"), function(req,res){
   if(req.isAuthenticated()){
   const newItem=new Auction({
     startedBy:req.user.id,
@@ -201,7 +264,8 @@ app.post("/startauction", function(req,res){
     duration:req.body.itemDuration,
     description:req.body.itemDescription,
     startedOn:moment().format("ddd MMM DD YYYY hh:mm:ss"),
-    endOn:moment().add(req.body.itemDuration,"hours")
+    endOn:moment().add(req.body.itemDuration,"hours"),
+    image:req.file.filename
   });
 
   newItem.save(function(err){
@@ -244,12 +308,12 @@ app.get('/viewbids',function(req,res){
 //manageauctions route
 app.get('/manageauctions',function(req,res){
   if(req.isAuthenticated()){
-    Auction.find({startedBy:req.user.id}, function(err, result){
+    Auction.find({startedBy:req.user.id}, function(err, results){
         if(err){
         console.log(err);
         }else{
           res.render('manage_auction', {
-            items: result,
+            items: results,
             AName:req.user.username
             });
          }
@@ -286,8 +350,8 @@ app.get("/items/:itemId", function(req,res){
 
 //bid update route under testing...
 app.post("/placeBid/:itemId",function(req,res){
-  var productId=req.params.itemId;
-      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder":req.user.username}},{upsert:true},function(err,result){
+  var productId=req.params.itemId;                                                                                              //made a change here
+      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder.name":req.user.username,"currentBidder.contact":req.user.email}},{upsert:true},function(err,result){
         if(err){
           console.log(err);
           req.flash("errorBid","You cannot place a Bid for your own Auction")

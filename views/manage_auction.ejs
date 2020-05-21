@@ -10,12 +10,13 @@
 <% items.forEach(function(item){ %>
   <div class="col-md-3">
           <div class="card m-3 p-1" >
-              <img class="card-img-top img-fluid" src="//placehold.it/500x200" alt="Card image cap">
+              <img class="card-img-top img-fluid" src="/image/<%= item.image %>" alt="Card image cap">
               <div class="card-block">
                 <h5><%= item.name %></h5>
                 <p><small><%= AName %></small></p>
                 <p>Current Price: <strong><%= item.currentBid %></strong></p>
-                <p>Highest Bidder:   <strong><%= item.currentBidder %></strong></p>
+                <p>Highest Bidder:   <strong><%= item.currentBidder.name %></strong></p>
+                <p>Contact: <strong><%= item.currentBidder.contact %> </strong></p>
                 <p>Participants: <strong><%= item.participants.length %></strong></p>
               </div>
               <%- include("bidUpdate",{Item:item}) %>

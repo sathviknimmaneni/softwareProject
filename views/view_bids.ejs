@@ -14,7 +14,7 @@
                         <h5><%= item.name %></h5>
                         <p><small></small></p>
                         <p>Current Price: <strong><%= item.currentBid %></strong></p>
-                        <p>Highest Bidder:   <strong><%= item.currentBidder %></strong></p>
+                        <p>Highest Bidder:   <strong><%= item.currentBidder.name %></strong></p>
                         <p>Participants: <strong><%= item.participants.length %></strong></p>
                       </div>
                       <%- include("bidUpdate",{Item:item}) %>

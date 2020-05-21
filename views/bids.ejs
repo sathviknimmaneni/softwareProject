@@ -18,9 +18,9 @@
 </style>
   <!-- bid intro and stuff   -->
   <section id="BidDetails" class="container-fluid mt-4">
-
         <div class="col-md-12">
         <div>
+          <img src="/image/<%= items.image %>" alt="Not a Valid Image" style="width:100vh;">
           <h1><%= items.name %></h1>
           <h5><%= SName %></h5>
           <hr>
@@ -42,7 +42,7 @@
 
         <div class="row">
           <div class="col-lg-4">
-            <h3 class="feat-head text-center" id="waitCurrent"><%= items.currentBidder%></h3>
+            <h3 class="feat-head text-center" id="waitCurrent"><%= items.currentBidder.name %></h3>
             <p class="feat-text  text-center" id="bidderDesc">currentBidder</p>
           </div>
 
