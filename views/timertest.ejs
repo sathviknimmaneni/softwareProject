@@ -21,13 +21,13 @@ var x = setInterval(function() {
   // Output the result in an element with id="demo"
   document.getElementById("<%= Element %>").innerHTML = days + "d " + hours + "h "
   + minutes + "m " + seconds + "s ";
-  document.getElementById("BidUpdate").disabled=false;
+  document.getElementById("BidUpdate<%= Id %>").disabled=false;
 
   // If the count down is over, write some text
   if (distance < 0) {
     clearInterval(x);
     document.getElementById("<%= Element %>").innerHTML = "FINISHED";
-    document.getElementById("BidUpdate").disabled = true;
+    document.getElementById("BidUpdate<%= Id %>").disabled = true;
     document.getElementById("bidderDesc").innerHTML = "Auction Winner";
   }
 }, 1000);

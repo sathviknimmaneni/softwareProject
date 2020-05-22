@@ -20,7 +20,7 @@
   <section id="BidDetails" class="container-fluid mt-4">
         <div class="col-md-12">
         <div>
-          <img src="/image/<%= items.image %>" alt="Not a Valid Image" style="width:100vh;">
+          <img src="/image/<%= items.image %>" alt="Not a Valid Image" style="max-width:100vw; height:100vh; left:0px">
           <h1><%= items.name %></h1>
           <h5><%= SName %></h5>
           <hr>
@@ -43,14 +43,14 @@
         <div class="row">
           <div class="col-lg-4">
             <h3 class="feat-head text-center" id="waitCurrent"><%= items.currentBidder.name %></h3>
-            <p class="feat-text  text-center" id="bidderDesc">currentBidder</p>
+            <p class="feat-text  text-center" id="bidderDesc">Current Highest</p>
           </div>
 
           <div class="col-lg-4">
             <h3 class="feat-head text-center" id="count<%= items.id%>"></h3>
             <p class="feat-text  text-center" >countdown</p>
           </div>
-          <%- include("timertest",{Element:"count"+items.id,Dline:items.endOn}) %>
+          <%- include("timertest",{Element:"count"+items.id,Dline:items.endOn,Id:items.id}) %>
           <div class="col-lg-4">
             <h3 class="feat-head text-center"><%= items.participants.length%></h3>
             <p class="feat-text  text-center">participants count</p>
