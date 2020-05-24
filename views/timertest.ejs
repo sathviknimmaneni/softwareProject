@@ -2,7 +2,6 @@
 // Set the date we're counting down to
  var deadline = new Date("<%= Dline %>").getTime();
 
-
 // Update the count down every 1 second
 var x = setInterval(function() {
 
@@ -29,7 +28,18 @@ var x = setInterval(function() {
     document.getElementById("<%= Element %>").innerHTML = "FINISHED";
     document.getElementById("BidUpdate").disabled = true;
     document.getElementById("bidderDesc").innerHTML = "Auction Winner";
+    $.post('/statusUpdate/<%= Id %>');
+    $("#waitCurrent").load("/getCurrentBidder/<%= Id %>");
   }
 }, 1000);
+
+
+var interval = 1000;  // 1000 = 1 second, 3000 = 3 seconds
+function doAjax() {
+  $("#currentBidValue").load("/getCurrentBidValue/<%= Id %>");
+  $("#waitCurrent").load("/getCurrentBidder/<%= Id %>");
+}
+
+setInterval(doAjax, interval);
 
 </script>

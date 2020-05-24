@@ -58,9 +58,11 @@ const auctionSchema=new mongoose.Schema({
   endOn:Date,
   currentBid:Number,
   currentBidder:{name:String,contact:String},
+  status:{type:String,default:"Ongoing"},
   participants:[{
     type:mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    sparse:true
   }],
   image:String
 });
@@ -222,7 +224,7 @@ app.post('/signup',function(req,res){
 app.get('/home',function(req,res){
   if(req.isAuthenticated()){
 
-  Auction.find({}, function(err, items){
+  Auction.find({status:{$ne:"FINISHED"}}, function(err, items){
       if(err){
       console.log(err);
       }else{
@@ -231,8 +233,6 @@ app.get('/home',function(req,res){
               AName:items.startedBy,
               welcomeMessage:req.flash("Welcome"),
               startedAuction:req.flash("auctionStarted"),
-              unableBid:req.flash("errorBid"),
-              placedBid:req.flash("successBid"),
               signedUp:req.flash("successSignUp")
               });
           }
@@ -337,7 +337,11 @@ app.get("/items/:itemId", function(req,res){
             res.render("bids",{
               items:item,
               SName:foundUser.username,
-              CDetails:foundUser.email});
+              CDetails:foundUser.email,
+              unableBid:req.flash("errorBid"),
+              placedBid:req.flash("successBid"),
+              },
+            );
             }
           });
         }
@@ -347,6 +351,20 @@ app.get("/items/:itemId", function(req,res){
  }
 });
 
+app.post("/statusUpdate/:itemId",function(req,res){
+  var itemId=req.params.itemId;
+
+  Auction.updateOne({_id:itemId},{$set:{"status":"FINISHED"}},function(err,result){
+    if(err){
+      console.log(err);
+    }else{
+      res.redirect("/items/"+itemId);
+    }
+  });
+
+});
+
+
 //bid update route under testing...
 app.post("/placeBid/:itemId",function(req,res){
   var productId=req.params.itemId;                                                                                              //made a change here
@@ -354,10 +372,10 @@ app.post("/placeBid/:itemId",function(req,res){
         if(err){
           console.log(err);
           req.flash("errorBid","You cannot place a Bid for your own Auction")
-          res.redirect("/home");
+          res.redirect("/items/"+productId);
         }else{
           req.flash("successBid","Your Bid is succesfully placed.")
-          res.redirect("/home");
+          res.redirect("/items/"+productId);
         }
       });
       Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId},{participants:{$ne:req.user.id}}]},{$push:{participants:req.user.id}},{upsert:true},function(err,result){
@@ -500,6 +518,39 @@ app.get("/chatroom",function(req,res){
   }
 });
 //-------- chatroom end -------
+
+
+app.get("/getCurrentBidder/:itemId",function(req,res){
+if(req.isAuthenticated()){
+    var itemId=req.params.itemId;
+    Auction.findOne({_id:itemId},function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        res.send(result.currentBidder.name);
+      }
+    });
+}else{
+  res.redirect("/home");
+}
+});
+
+app.get("/getCurrentBidValue/:itemId",function(req,res){
+  if(req.isAuthenticated()){
+    var itemId=req.params.itemId;
+    Auction.findOne({_id:itemId},function(err,result){
+      if(err){
+        console.log(err);
+      }else{
+        res.send(result.currentBid.toString());
+      }
+    });
+  }else{
+    res.redirect("/home");
+  }
+});
+
+
 
 //logout route
 app.get('/logout',function(req,res){
