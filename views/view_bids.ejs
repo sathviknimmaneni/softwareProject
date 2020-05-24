@@ -17,6 +17,12 @@
                         <p>Highest Bidder:   <strong><%= item.currentBidder.name %></strong></p>
                         <p>Participants: <strong><%= item.participants.length %></strong></p>
                         <p>Status: <strong><%= item.status %></strong></p>
+                        <p id="auctionUserStatus<%=item.id %>"></p>
+                        <script type="text/javascript">
+                            if("<%= currentUser %>" == "<%= item.currentBidder.contact %>" && "<%= item.status%>" === "FINISHED"){
+                            document.getElementById("auctionUserStatus<%= item.id %>").innerHTML="You Won";
+                            }
+                        </script>
                       </div>
                       <%- include("bidUpdate",{Item:item}) %>
                       <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>

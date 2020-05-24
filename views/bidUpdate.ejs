@@ -14,7 +14,7 @@
       <form class="" action="/placeBid/<%= Item._id %>" method="post">
       <div class="modal-body">
         <label for="updatedValue">You are placing:</label>
-          <input type="number" name="updatedValue" value="<%= Item.currentBid +1 %>" min="<%= Item.currentBid + 1 %>" required>
+          <input type="number" id="placeUpdatedValue" name="updatedValue" value="<%= Item.currentBid +1 %>" min="<%= Item.currentBid + 1 %>" required>
             </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Exit</button>
@@ -24,3 +24,11 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  var interval = 5000;  // 1000 = 1 second, 3000 = 3 seconds
+  function getUpdatedValue() {
+    $("#placeUpdatedValue").load("/getCurrentBidValue/<%= Item.id %>");
+  }
+  setInterval(getUpdatedValue, interval);
+</script>

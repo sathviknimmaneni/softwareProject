@@ -296,7 +296,7 @@ app.get('/viewbids',function(req,res){
     if (err) {
       console.log(err);
     }else{
-        res.render('view_bids',{items:results});
+        res.render('view_bids',{items:results,currentUser:req.user.email});
     }
   });
 }else{
@@ -340,6 +340,7 @@ app.get("/items/:itemId", function(req,res){
               CDetails:foundUser.email,
               unableBid:req.flash("errorBid"),
               placedBid:req.flash("successBid"),
+              tryAgain:req.flash("insufficient")
               },
             );
             }
@@ -367,22 +368,33 @@ app.post("/statusUpdate/:itemId",function(req,res){
 
 //bid update route under testing...
 app.post("/placeBid/:itemId",function(req,res){
-  var productId=req.params.itemId;                                                                                              //made a change here
-      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder.name":req.user.username,"currentBidder.contact":req.user.email}},{upsert:true},function(err,result){
-        if(err){
-          console.log(err);
-          req.flash("errorBid","You cannot place a Bid for your own Auction")
-          res.redirect("/items/"+productId);
-        }else{
-          req.flash("successBid","Your Bid is succesfully placed.")
-          res.redirect("/items/"+productId);
-        }
-      });
-      Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId},{participants:{$ne:req.user.id}}]},{$push:{participants:req.user.id}},{upsert:true},function(err,result){
-        if(err){
-          console.log(err);
-        }
-      });
+  var productId=req.params.itemId;
+  Auction.findOne({_id:productId},function(err,response){
+    if(err){
+      console.log(err);
+    }else{
+      if(req.body.updatedValue > response.currentBid){
+        Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId}]},{$set:{"currentBid":req.body.updatedValue,"currentBidder.name":req.user.username,"currentBidder.contact":req.user.email}},{upsert:true},function(err,result){
+          if(err){
+            console.log(err);
+            req.flash("errorBid","You cannot place a Bid for your own Auction")
+            res.redirect("/items/"+productId);
+          }else{
+            req.flash("successBid","Your Bid is succesfully placed.")
+            res.redirect("/items/"+productId);
+          }
+        });
+        Auction.updateOne({$and:[{startedBy:{$ne:req.user.id}},{_id:productId},{participants:{$ne:req.user.id}}]},{$push:{participants:req.user.id}},{upsert:true},function(err,result){
+          if(err){
+            console.log(err);
+          }
+        });
+      }else{
+        req.flash("insufficient","Your Bid amount was not sufficient")
+        res.redirect("/items/"+productId);
+      }
+    }
+  });
 });
 
 
