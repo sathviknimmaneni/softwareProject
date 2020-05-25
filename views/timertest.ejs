@@ -30,12 +30,14 @@ var x = setInterval(function() {
     document.getElementById("bidderDesc").innerHTML = "Auction Winner";
     $.post('/statusUpdate/<%= Id %>');
     $("#waitCurrent").load("/getCurrentBidder/<%= Id %>");
+    $(".auctionStatus").hide();
   }
 }, 1000);
 
 
 var interval = 1000;  // 1000 = 1 second, 3000 = 3 seconds
 function doAjax() {
+  $(".bidValueText").html("<h2>Closed at: </h2>")
   $("#currentBidValue").load("/getCurrentBidValue/<%= Id %>");
   $("#waitCurrent").load("/getCurrentBidder/<%= Id %>");
 }

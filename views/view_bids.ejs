@@ -17,10 +17,10 @@
                         <p>Highest Bidder:   <strong><%= item.currentBidder.name %></strong></p>
                         <p>Participants: <strong><%= item.participants.length %></strong></p>
                         <p>Status: <strong><%= item.status %></strong></p>
-                        <p id="auctionUserStatus<%=item.id %>"></p>
+                        <p style="text-align:center;"><strong id="auctionUserStatus<%=item.id %>"></strong></p>
                         <script type="text/javascript">
                             if("<%= currentUser %>" == "<%= item.currentBidder.contact %>" && "<%= item.status%>" === "FINISHED"){
-                            document.getElementById("auctionUserStatus<%= item.id %>").innerHTML="You Won";
+                            document.getElementById("auctionUserStatus<%= item.id %>").innerHTML="You Won\nContact the Owner for more details.";
                             }
                         </script>
                       </div>
