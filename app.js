@@ -172,7 +172,7 @@ app.get('/login',function(req,res){
   if(req.isAuthenticated()){
       res.redirect("/home");
   }else{
-    res.render('login',{loginError:req.flash("loginError")});
+    res.render('login',{loginError:req.flash("message")});
   }
 });
 
@@ -195,21 +195,21 @@ app.get('/login',function(req,res){
 // });
 // });
 
-app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:true}));
+app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:true,message:"invalid"}));
 
 //signup route
 app.get('/signup',function(req,res){
   if(req.isAuthenticated()){
     res.redirect("/home");
   }else{
-    res.render('signup');
+    res.render('signup',{errorM:req.flash("userExists")});
   }
 });
 
 app.post('/signup',function(req,res){
   User.register({email:req.body.email,username:req.body.username},req.body.password,function(err,user){
   if(err){
-    console.log(err);
+    req.flash("userExists","Sorry a User already exists with the given Mail Id.");
     res.redirect('/signup');
   }else{
     passport.authenticate("local")(req,res,function(){

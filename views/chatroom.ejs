@@ -17,19 +17,17 @@
                 <input id="message" type="text" class="form-control" name="messageText" placeholder="Message" required>
               </div>
 
-              <button id="send" class="btn btn-lg btn-outline-dark ml-auto">Send</button>
+              <button id="send" class="btn btn-lg btn-outline-dark ml-auto" onclick="updateScroll()">Send</button>
 
           </div>
         </div>
-
-
+        <script src="scripts/chat.js"></script>
+        <script type="text/javascript">
+          function updateScroll(){
+          var element = document.getElementById("chat-window");
+          element.scrollTop = element.scrollHeight;
+          }
+      updateScroll();
+        </script>
     </body>
-    <script src="scripts/chat.js"></script>
-    <script type="text/javascript">
-      function updateScroll(){
-      var element = document.getElementById("chat-window");
-      element.scrollTop = element.scrollHeight;
-      }
-  updateScroll();
-    </script>
 </html>

@@ -42,20 +42,23 @@
       <!-- bid details and stuff -->
 
       <!-- cards -->
-  <div id="feature-cards" class="m-4">
+  <div id="feature-cards" style="margin:5%;">
 
         <div class="row">
           <div class="col-lg-4">
+            <span class="material-icons" style="font-size:48px;">emoji_events</span>
             <h3 class="feat-head text-center" id="waitCurrent"><%= items.currentBidder.name %></h3>
             <p class="feat-text  text-center" id="bidderDesc">Current Highest</p>
           </div>
 
           <div class="col-lg-4">
+            <i class="material-icons" style="font-size:48px;">hourglass_full</i>
             <h3 class="feat-head text-center" id="count<%= items.id%>"></h3>
             <%- include("timertest",{Element:"count"+items.id,Dline:items.endOn,Id:items.id}) %>
             <p class="feat-text  text-center" >countdown</p>
           </div>
           <div class="col-lg-4">
+            <span class="material-icons" style="font-size:48px;">group</span>
             <h3 class="feat-head text-center"><%= items.participants.length%></h3>
             <p class="feat-text  text-center">participants count</p>
           </div>

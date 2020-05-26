@@ -1,7 +1,16 @@
 <%- include("partials/altnavbar") %>
 <div class="container mt-4">
 
-  <h1 style="text-align:center;">Register</h1>
+  <% if (errorM.length>0) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong><%= errorM %></strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    <% } %>
+
+    <h1 style="text-align:center;">Register</h1>
 
   <div class="row">
     <div class="col-sm-8 m-auto">
