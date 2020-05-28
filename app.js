@@ -29,6 +29,7 @@ mongoose.connect("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mon
 const conn=mongoose.createConnection("mongodb+srv://Sathvik:"+process.env.DBKEY+"@cluster0-deldk.mongodb.net/auctionDB",{useNewUrlParser:true, useUnifiedTopology: true});
 
 
+//config middlewares and others..
 mongoose.set("useCreateIndex",true);
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -46,7 +47,7 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+//mongo Schema for new Auction
 const auctionSchema=new mongoose.Schema({
   startedBy:String,
   name:String,
@@ -68,6 +69,7 @@ const auctionSchema=new mongoose.Schema({
 });
 auctionSchema.plugin(passportLocalMongo, { usernameUnique: false});
 
+//mongo schema for New User
 const userSchema=new mongoose.Schema({
   username:String,
   email:String,
@@ -75,12 +77,13 @@ const userSchema=new mongoose.Schema({
   role:{type:String,default:"user"},
   flag:{type:Boolean,default:true}
 });
-userSchema.plugin(passportLocalMongo,{usernameField: "email",passwordField:"password",findByUsername: function(model, queryParameters) {
-    // Add additional query parameter - AND condition - active: true
+userSchema.plugin(passportLocalMongo,{usernameUnique:true,usernameField: "email",passwordField:"password",findByUsername: function(model, queryParameters) {
+    // Add additional query parameter - AND condition - active: true block or unblock an User with flag.
     queryParameters.flag = true;
     return model.findOne(queryParameters);
   }});
 
+//mongo new message schema
 const messageSchema=new mongoose.Schema({
     username:String,
     message:String,
@@ -91,11 +94,12 @@ const Auction=mongoose.model("Auction",auctionSchema);
 const User=mongoose.model("User",userSchema);
 const Message=mongoose.model("Message",messageSchema);
 
+//passport authentication stuff
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
+//check role of a user (middle ware)
 const isAdmin = function (req, res, next) {
    if (req.user.role == "Admin"){
      return next ();
@@ -172,11 +176,11 @@ app.get('/login',function(req,res){
   if(req.isAuthenticated()){
       res.redirect("/home");
   }else{
-    res.render('login',{loginError:req.flash("message")});
+    res.render('login',{loginError:req.flash("userNotFound")});
   }
 });
 
-//
+
 // app.post('/login',function(req,res){
 //   user = new User({
 //     email:req.body.email,
@@ -185,17 +189,19 @@ app.get('/login',function(req,res){
 //
 //     req.login(user,function(err){
 //       if(err){
-//         req.flash("loginError","invalid username or password");
+//         req.flash("userNotFound","invalid username or password");
 //         res.redirect('/login');
 //       }else{
-//         passport.authenticate("local")(req,res,function(){
+//         passport.authenticate("local",{failureflash:true})(req,res,function(){
 //           res.redirect("/home");
 //         });
 //     }
 // });
 // });
 
-app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:true,message:"invalid"}));
+//does the same as the above commented snippet..
+app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:{"userNotFound":"Invalid Username or Password!"}}));
+
 
 //signup route
 app.get('/signup',function(req,res){
@@ -205,7 +211,6 @@ app.get('/signup',function(req,res){
     res.render('signup',{errorM:req.flash("userExists")});
   }
 });
-
 app.post('/signup',function(req,res){
   User.register({email:req.body.email,username:req.body.username},req.body.password,function(err,user){
   if(err){
@@ -282,14 +287,15 @@ app.post("/startauction",upload.single("uploadedImage"), function(req,res){
 
 //bidupdate and validation routes
 app.get("/bidUpdate",function(req,res){
-  res.render("bidUpdate");
+if(req.isAuthenticated()){
+    res.render("bidUpdate");
+}else{
+  res.redirect("/");
+}
 });
 
-app.post("/bidUpdate",function(req,res){
-console.log(req.body.bidAmount);
-});
 
-//view current auction routes
+//view your intrest route.
 app.get('/viewbids',function(req,res){
   if(req.isAuthenticated()){
   Auction.find({participants:req.user.id},function(err,results){
@@ -352,6 +358,7 @@ app.get("/items/:itemId", function(req,res){
  }
 });
 
+//gets request from AJAX when an Auction has been FINISHED.
 app.post("/statusUpdate/:itemId",function(req,res){
   var itemId=req.params.itemId;
 
@@ -362,11 +369,10 @@ app.post("/statusUpdate/:itemId",function(req,res){
       res.redirect("/items/"+itemId);
     }
   });
-
 });
 
 
-//bid update route under testing...
+//bid update route...
 app.post("/placeBid/:itemId",function(req,res){
   var productId=req.params.itemId;
   Auction.findOne({_id:productId},function(err,response){
@@ -424,6 +430,7 @@ app.get("/admin",isAdmin,function(req,res){
   }
 });
 
+//updating an Items details by Admin
 app.get("/adminupdate/:itemId",isAdmin,function(req,res){
 if(req.isAuthenticated()){
   var productId=req.params.itemId;
@@ -441,11 +448,13 @@ if(req.isAuthenticated()){
 
 app.post("/adminupdate/:itemId",function(req,res){
   var productId=req.params.itemId;
-  Auction.updateOne({_id:productId},{$set:{
+  Auction.updateOne({$and:[{_id:productId},{status:{$ne:"FINISHED"}}]},{$set:{
     "name":req.body.itemName,
     "category":req.body.itemCategory,
     "duration":req.body.itemDuration,
-    "description":req.body.itemDescription
+    "description":req.body.itemDescription,
+    "startedOn":moment().format("ddd MMM DD YYYY hh:mm:ss"),
+    "endOn":moment().add(req.body.itemDuration,"hours")
   }
 },function(err,result){
   if(err){
@@ -456,6 +465,7 @@ app.post("/adminupdate/:itemId",function(req,res){
 });
 });
 
+//update user flag from Admin access..
 app.post("/users/:userId/:Uflag",function(req,res){
   var UId=req.params.userId;
   var UFlag=req.params.Uflag;
@@ -484,7 +494,7 @@ var server = app.listen(process.env.PORT || 3000, function() {
   console.log("Server started on port 3000");
 });
 
-
+//chatroom route..
 app.get("/chatroom",function(req,res){
   if(req.isAuthenticated()){
     //----- Chatroom details and stuff ----------
@@ -500,7 +510,7 @@ app.get("/chatroom",function(req,res){
       io.on('connection', (socket) => {
           console.log('made socket connection', socket.id);
 
-          // Handle chat event
+          // Handle chat event gets from chat.js
           socket.on('chat', function(data){
                console.log(data);
                const newMessage = new Message({username:data.handle,message:data.message});
@@ -531,7 +541,7 @@ app.get("/chatroom",function(req,res){
 });
 //-------- chatroom end -------
 
-
+//api for AJAX request used in Bids view
 app.get("/getCurrentBidder/:itemId",function(req,res){
 if(req.isAuthenticated()){
     var itemId=req.params.itemId;
@@ -562,7 +572,13 @@ app.get("/getCurrentBidValue/:itemId",function(req,res){
   }
 });
 
-
+app.get("/about",function(req,res){
+  if(req.isAuthenticated()){
+    res.render("about");
+  }else{
+    res.redirect("/");
+  }
+});
 
 //logout route
 app.get('/logout',function(req,res){
@@ -570,6 +586,7 @@ app.get('/logout',function(req,res){
   res.redirect("/");
 });
 
+//404 error view
 app.get('*', function(req, res){
   res.status(404).render('error404');
 });

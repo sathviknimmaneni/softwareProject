@@ -20,7 +20,6 @@
                 <p>Participants: <strong><%= item.participants.length %></strong></p>
                 <p>Status: <strong><%= item.status %></strong></p>
               </div>
-              <%- include("bidUpdate",{Item:item}) %>
               <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
           </div>
       </div>

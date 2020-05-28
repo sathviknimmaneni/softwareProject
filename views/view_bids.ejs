@@ -20,11 +20,10 @@
                         <p style="text-align:center;"><strong id="auctionUserStatus<%=item.id %>"></strong></p>
                         <script type="text/javascript">
                             if("<%= currentUser %>" == "<%= item.currentBidder.contact %>" && "<%= item.status%>" === "FINISHED"){
-                            document.getElementById("auctionUserStatus<%= item.id %>").innerHTML="You Won\nContact the Owner for more details.";
+                            document.getElementById("auctionUserStatus<%= item.id %>").innerHTML="You Won. \nContact the Owner for more details.";
                             }
                         </script>
                       </div>
-                      <%- include("bidUpdate",{Item:item}) %>
                       <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
                   </div>
               </div>
