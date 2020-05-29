@@ -8,12 +8,32 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<style>
+p{
+  margin: 10px;
+}
+
+  h1{
+    font-size: 60px;
+    font-weight:900;
+    margin:20px;
+  }
+  h2{
+    font-size: 45px;
+    font-weight: 800;
+    margin: 30px;
+  }
+  .about-text{
+    font-size: 20px;
+  }
+</style>
     </head>
 
-  <body style="margin-top:55px;">
+  <body style="margin-top:100px;text-align:center;">
 <%- include("partials/navbar") %>
-<h1>About</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<h1>About Us</h1>
+<p class="about-text">Bidders Nest is MEC's Online Auction website built as a project for <strong>Software Engineering (CS 312)</strong>.<br><br>Bidders Nest was built using <strong>Bootstrap, Jquery, Javascript</strong> for Front-End, <strong>Node js</strong> for Back-End, <strong>MongoDB</strong> for databases.</p>
 <h2>Features</h2>
 <div style="text-align:center;">
 
@@ -101,9 +121,9 @@ sentiment_very_satisfied
     <p>The Complete 2020 Web Development Bootcamp. <br> Gave us the foundation to work on this Project.</p>
   </div>
     <div class="col-lg-4 p-4">
-      <span><img src="./icons/so-logo.png" alt="StackOverflow Logo" width=300px;" height="75px;"></span>
+      <span><img src="./icons/so-logo.png" alt="StackOverflow Logo" width="300px;" height="75px;"></span>
         <h3>StackOverflow</h3>
-        <p>What would we have done without StackOverflow.<br>Thank's for resolving our issues.</p>
+        <p>What would we have done without StackOverflow.</p>
     </div>
     <div class="col-lg-4 p-4">
       <span><img src="./icons/youtube.png" alt="youtube Logo" width="100px;" height="70px;"></span>

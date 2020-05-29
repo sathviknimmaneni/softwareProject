@@ -19,7 +19,7 @@
 </div>
       <div class="card-deck row">
         <% items.forEach(function(item){ %>
-          <div class="col-md-3">
+          <div class="col-md-3 zoom-effect">
                   <div class="card m-3 p-1" >
                       <a href="/image/<%= item.image%>" target="_blank"><img class="card-img-top img-fluid img-responsive" src="/image/<%= item.image %>" alt="Not a Valid image" style="max-height:200px;"></a>
                       <div class="card-block">
@@ -44,6 +44,7 @@
     </div>
 
 <%- include('partials/footer') %>
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  </body>
