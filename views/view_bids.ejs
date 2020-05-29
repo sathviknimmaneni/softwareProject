@@ -1,3 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auction for which you placed your Bid.">
+    <title>BN- Your Intrests</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  </head>
+  <body style="margin-top:55px;">
+
 <%- include('partials/navbar') %>
 
     <div class="Manage_auctions">
@@ -9,7 +21,7 @@
         <% items.forEach(function(item){ %>
           <div class="col-md-3">
                   <div class="card m-3 p-1" >
-                      <img class="card-img-top img-fluid" src="/image/<%= item.image %>" alt="Not a Valid Image">
+                      <a href="/image/<%= item.image%>" target="_blank"><img class="card-img-top img-fluid img-responsive" src="/image/<%= item.image %>" alt="Not a Valid image" style="max-height:200px;"></a>
                       <div class="card-block">
                         <h5><%= item.name %></h5>
                         <p><small></small></p>
@@ -32,3 +44,9 @@
     </div>
 
 <%- include('partials/footer') %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  </body>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,27 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="59">
+    <meta name="description" content="Auction Item Details">
+    <title>BN- Auction Details</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+      #features{
+        padding: 7% 15%;
+        position: relative;
+        z-index: 1;
+        background-color: #fff;
+      }
+
+      .feat-text{
+        color: #8f8f8f;
+        padding: 0 5%;
+      }
+
+      #BidDetails{
+        text-align:center;
+      }
+    </style>
+
+  </head>
+  <body style="margin-top:55px;">
+
 <%- include('partials/navbar') %>
-<style>
-  #features{
-    padding: 7% 15%;
-    position: relative;
-    z-index: 1;
-    background-color: #fff;
-  }
 
-  .feat-text{
-    color: #8f8f8f;
-    padding: 0 5%;
-  }
-
-  #BidDetails{
-    text-align:center;
-  }
-</style>
   <!-- bid intro and stuff   -->
 <%- include("errorBids") %>
   <section id="BidDetails" class="container-fluid mt-4">
         <div class="col-md-12">
         <div>
-          <img src="/image/<%= items.image %>" alt="Not a Valid Image" class="img-responsive mt-4 mb-4" width="100%" height="auto">
+          <a href="/image/<%= items.image%>" target="_blank"><img src="/image/<%= items.image %>" alt="Not a Valid Image" class="img-responsive mt-4 mb-4" width="100%" height="auto"></a>
           <h1><%= items.name %></h1>
           <h5><%= SName %></h5>
           <hr>
@@ -98,16 +115,14 @@
           <th>Auction Start</th>
           <td id="startedOnDate"></td>
           <script type="text/javascript">
-            var d=new Date(Date.parse("<%= items.startedOn %>")).toUTCString();
-            $("#startedOnDate").text(d);
+
         </script>
         </tr>
         <tr>
           <th>Auction end</th>
           <td id="endedOnDate"></td>
           <script type="text/javascript">
-            var d=new Date(Date.parse("<%= items.endOn %>")).toUTCString();
-            $("#endedOnDate").text(d);
+
         </script>
         </tr>
         <tr>
@@ -121,5 +136,18 @@
 
   </section>
 
-
 <%- include("partials/footer") %>
+<script type="text/javascript">
+  var d=new Date(Date.parse("<%= items.startedOn %>")).toUTCString();
+  $("#startedOnDate").text(d);
+
+  var d2=new Date(Date.parse("<%= items.endOn %>")).toUTCString();
+  $("#endedOnDate").text(d2);
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  </body>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

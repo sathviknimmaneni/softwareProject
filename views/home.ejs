@@ -1,4 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bidders Nest home page">
+    <meta name="author" content="T87AN">
+    <title>Bidders Nest</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  </head>
+  <body style="margin-top:55px;">
+
 <%- include('partials/navbar') %>
+
 <%- include('errorMessages') %>
 <section id="Intro Content">
 <div class="jumbotron mt-3">
@@ -20,7 +34,7 @@
 
     <div class="card m-4 p-1 col-lg-3">
       <div class="card-body">
-        <h1>Your Auctions</h1>
+        <h1>By You</h1>
         <hr>
         <h5>Keep track of who might win your Auction.</h5>
       </div>
@@ -59,7 +73,7 @@
   <% post.forEach(function(item){ %>
     <div class="col-md-3">
             <div class="card m-3 p-1" >
-                <a href="/image/<%= item.image%>"><img class="card-img-top img-fluid img-responsive" src="/image/<%= item.image %>" alt="Not a Valid image" style="max-height:200px;"></a>
+                <a href="/image/<%= item.image%>" target="_blank"><img class="card-img-top img-fluid img-responsive" src="/image/<%= item.image %>" alt="Not a Valid image" style="max-height:200px;"></a>
                 <div class="card-block">
                   <h5><%= item.name %></h5>
                   <p><small><%= AName %></small></p>
@@ -75,3 +89,10 @@
 </div>
 </section>
 <%- include('partials/footer') %>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>  </body>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
