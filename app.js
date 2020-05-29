@@ -268,7 +268,7 @@ app.post("/startauction",upload.single("uploadedImage"), function(req,res){
     duration:req.body.itemDuration,
     description:req.body.itemDescription,
     startedOn:moment().format("ddd MMM DD YYYY hh:mm:ss"),
-    endOn:moment().add(req.body.itemDuration,"hours"),
+    endOn:moment().add(req.body.itemDuration,"hours").format("ddd MMM DD YYYY hh:mm:ss"),
     image:req.file.filename
   });
 
@@ -454,7 +454,7 @@ app.post("/adminupdate/:itemId",function(req,res){
     "duration":req.body.itemDuration,
     "description":req.body.itemDescription,
     "startedOn":moment().format("ddd MMM DD YYYY hh:mm:ss"),
-    "endOn":moment().add(req.body.itemDuration,"hours")
+    "endOn":moment().add(req.body.itemDuration,"hours").format("ddd MMM DD YYYY hh:mm:ss")
   }
 },function(err,result){
   if(err){

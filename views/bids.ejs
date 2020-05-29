@@ -96,11 +96,19 @@
         </tr>
         <tr>
           <th>Auction Start</th>
-          <td><%= items.startedOn %></td>
+          <td id="startedOnDate"></td>
+          <script type="text/javascript">
+            var d=new Date(Date.parse("<%= items.startedOn %>")).toUTCString();
+            $("#startedOnDate").text(d);
+        </script>
         </tr>
         <tr>
           <th>Auction end</th>
-          <td><%= items.endOn %></td>
+          <td id="endedOnDate"></td>
+          <script type="text/javascript">
+            var d=new Date(Date.parse("<%= items.endOn %>")).toUTCString();
+            $("#endedOnDate").text(d);
+        </script>
         </tr>
         <tr>
           <th>Contact</th>
