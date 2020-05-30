@@ -114,16 +114,10 @@
         <tr>
           <th>Auction Start</th>
           <td id="startedOnDate"></td>
-          <script type="text/javascript">
-
-        </script>
         </tr>
         <tr>
           <th>Auction end</th>
           <td id="endedOnDate"></td>
-          <script type="text/javascript">
-
-        </script>
         </tr>
         <tr>
           <th>Contact</th>
@@ -138,10 +132,10 @@
 
 <%- include("partials/footer") %>
 <script type="text/javascript">
-  var d=new Date(Date.parse("<%= items.startedOn %>")).toUTCString();
+  var d=new Date(Date.parse("<%= items.startedOn %>")).toLocaleString();
   $("#startedOnDate").text(d);
 
-  var d2=new Date(Date.parse("<%= items.endOn %>")).toUTCString();
+  var d2=new Date(Date.parse("<%= items.endOn %>")).toLocaleString();
   $("#endedOnDate").text(d2);
 </script>
 

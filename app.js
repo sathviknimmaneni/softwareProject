@@ -181,25 +181,6 @@ app.get('/login',function(req,res){
 });
 
 
-// app.post('/login',function(req,res){
-//   user = new User({
-//     email:req.body.email,
-//     password:req.body.password
-//   });
-//
-//     req.login(user,function(err){
-//       if(err){
-//         req.flash("userNotFound","invalid username or password");
-//         res.redirect('/login');
-//       }else{
-//         passport.authenticate("local",{failureflash:true})(req,res,function(){
-//           res.redirect("/home");
-//         });
-//     }
-// });
-// });
-
-//does the same as the above commented snippet..
 app.post('/login',passport.authenticate('local', { successRedirect: '/home', failureRedirect: '/login',failureflash:{"userNotFound":"Invalid Username or Password!"}}));
 
 
@@ -267,8 +248,8 @@ app.post("/startauction",upload.single("uploadedImage"), function(req,res){
     currentBid:req.body.basePrice,
     duration:req.body.itemDuration,
     description:req.body.itemDescription,
-    startedOn:moment().format("ddd MMM DD YYYY hh:mm:ss"),
-    endOn:moment().add(req.body.itemDuration,"hours").format("ddd MMM DD YYYY hh:mm:ss"),
+    startedOn:moment().utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss"),
+    endOn:moment().add(req.body.itemDuration,"hours").utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss"),
     image:req.file.filename
   });
 

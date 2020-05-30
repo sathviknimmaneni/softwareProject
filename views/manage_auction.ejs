@@ -31,6 +31,12 @@
                 <p>Contact: <strong><%= item.currentBidder.contact %> </strong></p>
                 <p>Participants: <strong><%= item.participants.length %></strong></p>
                 <p>Status: <strong><%= item.status %></strong></p>
+                <p style="text-align:center;"><strong id="auctionItemStatus<%=item.id %>"></strong></p>
+                <script type="text/javascript">
+                    if("<%= item.status%>" === "FINISHED"){
+                    document.getElementById("auctionItemStatus<%= item.id %>").innerHTML="Contact <%= item.currentBidder.name %> for more details.";
+                    }
+                </script>
               </div>
               <a href="/items/<%= item._id %>" class="btn btn-outline-dark btn-lg btn-block mt-2" role="button">View Details</a>
           </div>
