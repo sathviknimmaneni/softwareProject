@@ -489,11 +489,9 @@ app.get("/chatroom",function(req,res){
       }));
 
       io.on('connection', (socket) => {
-          console.log('made socket connection', socket.id);
 
           // Handle chat event gets from chat.js
           socket.on('chat', function(data){
-               console.log(data);
                const newMessage = new Message({username:data.handle,message:data.message});
                newMessage.save(function(err){
                  if(err){
