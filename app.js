@@ -248,8 +248,8 @@ app.post("/startauction",upload.single("uploadedImage"), function(req,res){
     currentBid:req.body.basePrice,
     duration:req.body.itemDuration,
     description:req.body.itemDescription,
-    startedOn:moment().utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss"),
-    endOn:moment().add(req.body.itemDuration,"hours").utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss"),
+    startedOn:moment().format("YYYY-MM-DD HH:mm:ss"),
+    endOn:moment().add(req.body.itemDuration,"hours").format("YYYY-MM-DD HH:mm:ss"),
     image:req.file.filename
   });
 
