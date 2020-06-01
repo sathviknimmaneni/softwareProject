@@ -1,3 +1,5 @@
+var getError=document.getElementById("auctionBidError");
+
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -40,16 +42,17 @@ document.getElementById("startAuctionButton").disabled=false;
 function showError(error) {
   switch(error.code) {
     case error.PERMISSION_DENIED:
-      getLocation()
+      getLocation();
+      getError.innerHTML="Please Enable Location Services.";
       break;
     case error.POSITION_UNAVAILABLE:
-      console.log("Location information is unavailable.");
+      getError.innerHTML="Location information is unavailable.";
       break;
     case error.TIMEOUT:
-      console.log("The request to get user location timed out.");
+      getError.innerHTML="The request to get user location timed out.";
       break;
     case error.UNKNOWN_ERROR:
-      console.log("An unknown error occurred.");
+      getError.innerHTML="An unknown error occurred.";
       break;
   }
 }
